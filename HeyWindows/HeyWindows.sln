@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.Core", "HeyWindows.Core\HeyWindows.Core.csproj", "{91765320-76C1-45F7-84C8-00BE22E3A332}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.App", "HeyWindows.App\HeyWindows.App.csproj", "{217AF69D-C484-4DC6-8243-38F854C69000}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91765320-76C1-45F7-84C8-00BE22E3A332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91765320-76C1-45F7-84C8-00BE22E3A332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91765320-76C1-45F7-84C8-00BE22E3A332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91765320-76C1-45F7-84C8-00BE22E3A332}.Release|Any CPU.Build.0 = Release|Any CPU
+		{217AF69D-C484-4DC6-8243-38F854C69000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{217AF69D-C484-4DC6-8243-38F854C69000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{217AF69D-C484-4DC6-8243-38F854C69000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{217AF69D-C484-4DC6-8243-38F854C69000}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

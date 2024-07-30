@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <NoWarn>1701;1702;CA1416</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <NoWarn>1701;1702;CA1416</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="System.Speech">
+        <HintPath>..\HeyWindows.App\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Speech.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
