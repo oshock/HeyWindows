@@ -7,8 +7,20 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <NoWarn>1701;1702;CA1416</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <NoWarn>1701;1702;CA1416</NoWarn>
+    </PropertyGroup>
+
     <ItemGroup>
       <PackageReference Include="System.Speech" Version="9.0.0-preview.6.24327.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HeyWindows.Core\HeyWindows.Core.csproj" />
     </ItemGroup>
 
 </Project>

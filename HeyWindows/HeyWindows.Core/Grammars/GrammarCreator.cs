@@ -1,20 +1,27 @@
 ﻿using System.Speech.Recognition;
 using System.Text.Json.Serialization;
+using HeyWindows.Core.Commands;
 
 namespace HeyWindows.Core.Grammars;
 
-public class GrammarCreator
+public class CommandProcessor
 {
-    public static GrammarCreator Create()
+    public GrammarBuilder BuildGrammarFromCommand(Command command)
     {
-        return new GrammarCreator();
+        ArgumentNullException.ThrowIfNull(command);
+
+        var commandBuilder = new GrammarBuilder(new Choices(command.Triggers.ToArray()));
+
+        if (command.SubCommands.Count > 0)
+        {
+            var subCommandChoices = new Choices();
+
+            foreach (var subCommand in command.SubCommands)
+                subCommandChoices.Add(BuildGrammarFromCommand(subCommand));
+
+            commandBuilder.Append(subCommandChoices);
+        }
+
+        return commandBuilder;
     }
-
-    public readonly GrammarBuilder Builder = new();
-
-    public void IncorporatePhrase(string text) => Builder.Append(text);
-
-    public static Choices CreateChoice(params string[] strings) => new(strings);
-
-    public void AppendBuilder(GrammarBuilder builder) => Builder.Append(builder);
 }

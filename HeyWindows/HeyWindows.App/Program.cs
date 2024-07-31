@@ -1,35 +1,63 @@
 ﻿using System.Speech.Recognition;
+using HeyWindows.Core.Commands;
+using HeyWindows.Core.Grammars;
+using HeyWindows.Core.Listeners;
 
-using (
-    SpeechRecognitionEngine recognizer =
-    new SpeechRecognitionEngine(
-        new System.Globalization.CultureInfo("en-US")))
+var commander = new Commander();
+commander.Initialize();
+
+var container = new CommandContainer("Main", new Command
 {
-
-    // Create and load a dictation grammar.  
-    recognizer.LoadGrammar(new DictationGrammar());
-
-    // Add a handler for the speech recognized event.  
-    recognizer.SpeechRecognized += recognizer_SpeechRecognized;
-
-    // Configure input to the speech recognizer.  
-    recognizer.SetInputToDefaultAudioDevice();
-
-    // Start asynchronous, continuous speech recognition.  
-    recognizer.RecognizeAsync(RecognizeMode.Single);
-
-    // Keep the console window open.  
-    while (true)
+    Name = "Open",
+    Triggers = new List<string>()
     {
-        Console.ReadLine();
+        "Open"
+    },
+    SubCommands = new List<Command>
+    {
+        new()
+        {
+            Name = "Chrome",
+            Triggers = new List<string>()
+            {
+                "Chrome"
+            },
+            Action = () => Console.WriteLine("\nOpening chrome!!!!!!!!!\n")
+        },
+        new()
+        {
+            Name = "Fortnite",
+            Triggers = new List<string>()
+            {
+                "Fortnite"
+            },
+            Action = () => Console.WriteLine("\nOpening Fortnite!!!!!!!!!\n")
+        },
+        new()
+        {
+            Name = "Edge",
+            Triggers = new List<string>()
+            {
+                "Edge"
+            },
+            Action = () => Console.WriteLine("\nOpening Edge!!!!!!!!!\n")
+        }
     }
-}
+});
+commander.InitializeContainer(container);
+commander.Activate();
 
-static void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+/*
+var command = GrammarCreator.Create();
+command.IncorporatePhrase("Hey Windows");
+command.AppendBuilder(GrammarCreator.CreateChoice("Open Google", "Open Chrome"));
+
+listener.Grammars.Add(command.Builder);
+listener.Initialize();
+listener.Listen();
+*/
+
+while (true)
 {
-    Console.WriteLine($"Recognized text: \"{e.Result.Text}\"");
-    foreach (var phrase in e.Result.Alternates)
-    {
-        Console.WriteLine($"    - \"{phrase.Text}\"");
-    }
+    Console.ReadLine();
 }
