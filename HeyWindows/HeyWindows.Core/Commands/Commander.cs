@@ -26,8 +26,7 @@ public class Commander
         var root = RootCommand;
         root.SubCommands = container.Commands;
         
-        var processor = new CommandProcessor();
-        var builder = processor.BuildGrammarFromCommand(root);
+        var builder = root.BuildGrammarFromCommand();
         _listener?.Grammars.Add(builder);
 
         _listener.Initialize(); // Consume added grammars
