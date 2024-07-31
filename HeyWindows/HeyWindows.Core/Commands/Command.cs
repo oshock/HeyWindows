@@ -13,7 +13,6 @@ public class Command
     public string Name = "Unnamed command";
     
     public List<string> Triggers = new(); // "Hey Windows"
-    public Command? Group; // Parent trigger/command
     public List<Command> SubCommands = new(); // "Hey Windows" --> "Open ..."
     public Action? Action; // Command action.. duh...
 
