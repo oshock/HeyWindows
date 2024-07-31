@@ -24,7 +24,7 @@ var container = new CommandContainer("Main", new Command
                 {
                     "Chrome"
                 },
-                Action = () => Console.WriteLine("\nOpening chrome!!!!!!!!!\n")
+                //Action = () => Console.WriteLine("\nOpening chrome!!!!!!!!!\n")
             },
             new()
             {
@@ -33,7 +33,7 @@ var container = new CommandContainer("Main", new Command
                 {
                     "Fortnite"
                 },
-                Action = () => Console.WriteLine("\nOpening Fortnite!!!!!!!!!\n")
+               //Action = () => Console.WriteLine("\nOpening Fortnite!!!!!!!!!\n")
             },
             new()
             {
@@ -42,7 +42,7 @@ var container = new CommandContainer("Main", new Command
                 {
                     "Edge"
                 },
-                Action = () => Console.WriteLine("\nOpening Edge!!!!!!!!!\n")
+                //Action = () => Console.WriteLine("\nOpening Edge!!!!!!!!!\n")
             }
         }
     },
@@ -62,22 +62,12 @@ var container = new CommandContainer("Main", new Command
                 {
                     "Chrome"
                 },
-                Action = () => Console.WriteLine("\nLaunching chrome!!!!!!!!!\n")
+                //Action = () => Console.WriteLine("\nLaunching chrome!!!!!!!!!\n")
             }
         }
     });
 commander.InitializeContainer(container);
 commander.Activate();
-
-/*
-var command = GrammarCreator.Create();
-command.IncorporatePhrase("Hey Windows");
-command.AppendBuilder(GrammarCreator.CreateChoice("Open Google", "Open Chrome"));
-
-listener.Grammars.Add(command.Builder);
-listener.Initialize();
-listener.Listen();
-*/
 
 while (true)
 {

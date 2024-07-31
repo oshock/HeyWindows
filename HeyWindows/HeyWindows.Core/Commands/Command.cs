@@ -1,4 +1,5 @@
-﻿using HeyWindows.Core.Utils;
+﻿using HeyWindows.Core.Commands.Executors;
+using HeyWindows.Core.Utils;
 
 namespace HeyWindows.Core.Commands;
 
@@ -14,7 +15,7 @@ public class Command
     
     public List<string> Triggers = new(); // "Hey Windows"
     public List<Command> SubCommands = new(); // "Hey Windows" --> "Open ..."
-    public Action? Action; // Command action.. duh...
+    public ICommandExecutor? Executor; // Command action.. duh...
 
     public bool IsActive = true;
 

@@ -17,10 +17,19 @@ public class ExecutableCommandArgs : ICommandArgs
     
     [ArgumentField("Wait For Exit", "Should we wait for the process to exit before executing more commands?")]
     public bool WaitForExit;
+
+    // TODO
+    public static ICommandArgs Parse(string[] words)
+    {
+        var instance = new ExecutableCommandArgs();
+        return instance;
+    }
 }
 
 public class ExecutableExecutor : ICommandExecutor
 {
+    public ICommandArgs ArgumentHandler { get; } = new ExecutableCommandArgs();
+    
     public string Name { get; set; } = "Process Executor";
 
     public bool CanExecute(ICommandArgs args)
@@ -53,7 +62,7 @@ public class ExecutableExecutor : ICommandExecutor
         }
         catch (Exception ex)
         {
-            
+            LogError(ex.ToString());
         }
     }
 }

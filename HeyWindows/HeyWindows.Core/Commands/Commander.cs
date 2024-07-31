@@ -40,7 +40,7 @@ public class Commander
         { CommandingCommander = this };
     }
 
-    public void Activate() => _listener.Listen();
+    public void Activate() => _listener!.Listen();
 
     public void Execute(string phrase)
     {
@@ -76,10 +76,13 @@ public class Commander
                     if (current is null)
                         continue;
 
-                    if (current.Action is null)
-                        throw new InvalidExpressionException($"'{current.Name}' does not have an action to execute.");
-                
-                    current.Action();
+                    if (current.Executor is null)
+                        throw new InvalidExpressionException($"'{current.Name}' does not have an executor to execute.");
+
+                    // TODO if (current.Executor.TryExecute())
+                    {
+                        
+                    }
                     return;
                 }
             }
