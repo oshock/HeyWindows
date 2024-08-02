@@ -10,7 +10,7 @@ public class Commander
 {
     private readonly List<CommandContainer> _containers = new();
 
-    public Command RootCommand = new()
+    public static Command RootCommand = new()
     {
         Name = "Activation",
         Triggers = { "Hey Windows", "Windows" }
@@ -50,6 +50,8 @@ public class Commander
 
         if (!IsCommand(RootCommand, words, out index))
             return;
+
+        var afterRootIndex = index;
         
         foreach (var container in _containers)
         {
