@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.Core", "HeyWindo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.Testing", "HeyWindows.Testing\HeyWindows.Testing.csproj", "{217AF69D-C484-4DC6-8243-38F854C69000}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.App", "HeyWindows.App\HeyWindows.App.csproj", "{EA9F11C4-CF4A-4089-8DE3-4B3D5377398D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{217AF69D-C484-4DC6-8243-38F854C69000}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{217AF69D-C484-4DC6-8243-38F854C69000}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{217AF69D-C484-4DC6-8243-38F854C69000}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA9F11C4-CF4A-4089-8DE3-4B3D5377398D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA9F11C4-CF4A-4089-8DE3-4B3D5377398D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA9F11C4-CF4A-4089-8DE3-4B3D5377398D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA9F11C4-CF4A-4089-8DE3-4B3D5377398D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

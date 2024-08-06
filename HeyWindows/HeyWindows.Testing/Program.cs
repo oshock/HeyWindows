@@ -19,7 +19,8 @@ var container = new CommandContainer("Main", new Command
         },
         Arguments = new ExecutableCommandArgs
         {
-            FilePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe"
+            FilePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe",
+            Elevated = true
         }
     },
     new Command
@@ -36,7 +37,8 @@ var container = new CommandContainer("Main", new Command
         Arguments = new ExecutableCommandArgs
         {
             FilePath =
-                @"C:\Program Files\WindowsApps\Microsoft.WindowsNotepad_11.2405.13.0_x64__8wekyb3d8bbwe\Notepad\Notepad.exe"
+                @"C:\Program Files\WindowsApps\Microsoft.WindowsNotepad_11.2405.13.0_x64__8wekyb3d8bbwe\Notepad\Notepad.exe",
+            Elevated = true
         }
     });
 commander.InitializeContainer(container);
