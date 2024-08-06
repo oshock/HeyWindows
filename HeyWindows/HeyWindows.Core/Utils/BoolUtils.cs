@@ -9,4 +9,9 @@ public static class BoolUtils
 
         action();
     }
+
+    public static bool ContainsOrFalse(this string? s, string str)
+    {
+        return s is not null && s.Contains(str);
+    }
 }

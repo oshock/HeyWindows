@@ -37,11 +37,18 @@ public class Listener
 
     private void Recognizer_OnSpeechRecognized(object? sender, SpeechRecognizedEventArgs e)
     {
+        Console.WriteLine("==============================================");
         Console.WriteLine($"Recognized text: \"{e.Result.Text}\"");
+        Console.WriteLine("Pronunciation: ");
+        Console.WriteLine($"{e.Result.Words.Select( x=> x.Pronunciation).MergeStringArray()}\"");
+        
         foreach (var phrase in e.Result.Alternates)
         {
-            Console.WriteLine($"    - \"{phrase.Text}\"");
+            Console.WriteLine("\nAlternative: ");
+            Console.WriteLine($"\t- \"{phrase.Text}\"");
+            Console.WriteLine($"\tPronunciation: \"{phrase.Words.Select( x=> x.Pronunciation).MergeStringArray()}\"");
         }
+        Console.WriteLine("==============================================");
 
         CommandingCommander!.Execute(e.Result.Text);
     }

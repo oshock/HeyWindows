@@ -35,6 +35,11 @@ public static class ArrayUtils
         return strings.Aggregate(string.Empty, (current, str) => current + str + delimiter);
     }
 
+    public static TResult[] MergeArray<TSource, TResult>(this IEnumerable<TSource> array, Func<TSource, TResult> func)
+    {
+        return array.Select(elm => func(elm)).ToArray();
+    }
+
     public static bool ContainsAny(this IEnumerable<object> objects, object[] objectsToEqual) => objects.Any(objectsToEqual.Contains);
 
     public static bool ContainsAnyToLower(this IEnumerable<string> strings, params string[] strs) =>

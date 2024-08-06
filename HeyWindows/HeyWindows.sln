@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.Core", "HeyWindows.Core\HeyWindows.Core.csproj", "{91765320-76C1-45F7-84C8-00BE22E3A332}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.App", "HeyWindows.App\HeyWindows.App.csproj", "{217AF69D-C484-4DC6-8243-38F854C69000}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeyWindows.Testing", "HeyWindows.Testing\HeyWindows.Testing.csproj", "{217AF69D-C484-4DC6-8243-38F854C69000}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

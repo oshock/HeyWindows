@@ -18,31 +18,6 @@ public class ExecutableCommandArgs : ICommandArgs
     
     [ArgumentField("Wait For Exit", "Should we wait for the process to exit before executing more commands?")]
     public bool WaitForExit;
-
-    public static ICommandArgs Parse(string[] words)
-    {
-        var instance = new ExecutableCommandArgs();
-
-        var withIndex = words.FindIndex("with");
-        var trigger = words.MergeStringArray();
-        if (withIndex > 0)
-            trigger = words.SelectRange(0, withIndex).MergeStringArray();
-
-        if (!SavedDataReader.TryGetAll(trigger, out var variables))
-            throw new KeyNotFoundException($"Could not find variable with trigger '{trigger}'.");
-        
-        // TODO ask for clarifcation
-        var variable = variables.First();
-        instance.FilePath =
-            variable.Type == VariableType.String
-                ? variable.Value?.ToString()!
-                : throw new InvalidDataException(
-                    $"Variable '{variable.Name}' expected to be {VariableType.String}, got '{variable.Type}'. \nValue: '{variable.Value}'");
-
-        instance.Elevated = words.ContainsAnyToLower("elevated", "admin"); 
-        
-        return instance;
-    }
 }
 
 public class ExecutableExecutor : ICommandExecutor
@@ -70,7 +45,8 @@ public class ExecutableExecutor : ICommandExecutor
 
             if (exeArgs.Elevated)
             {
-
+                startInfo.Verb = "runas";
+                startInfo.UseShellExecute = true;
             }
 
             var proc = Process.Start(startInfo)!;

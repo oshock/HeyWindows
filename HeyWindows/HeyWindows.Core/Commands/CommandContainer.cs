@@ -30,4 +30,6 @@ public class CommandContainer
         Name = name;
         Commands.AddRange(commands);
     }
+
+    public List<Command> FindCommands(string trigger) => Commands.Where(x => x.Triggers.Contains(trigger)).ToList();
 }

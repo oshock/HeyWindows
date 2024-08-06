@@ -20,9 +20,6 @@ public class SavedVariable
     [JsonPropertyName("type")]
     public VariableType Type;
     
-    [JsonPropertyName("triggers")]
-    public List<string>? Triggers;
-    
     [JsonPropertyName("value")]
     public object? Value;
 }
@@ -59,10 +56,10 @@ public static class SavedDataReader
         File.WriteAllText(DATA_FILEPATH, data.ToJsonString());
     }
     
-    public static bool TryGetAll(string trigger, out List<SavedVariable> variables)
+    public static bool TryGet(string name, out SavedVariable? variable)
     {
-        variables = (_cached?.Variables ?? throw new InvalidDataException($"'{DATA_FILEPATH}' has not been read."))
-            .Where(variable => variable.Triggers?.Contains(trigger) ?? false).ToList();
-        return variables.Count > 0;
+        variable = (_cached?.Variables ?? throw new InvalidDataException($"'{DATA_FILEPATH}' has not been read."))
+            .FirstOrDefault(x => x.Name == name);
+        return !variable?.Equals(default) ?? false;
     }
 }

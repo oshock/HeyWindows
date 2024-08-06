@@ -1,26 +1,25 @@
 ﻿using System.Speech.Recognition;
 using HeyWindows.Core.Commands;
+using HeyWindows.Core.Utils;
 
 namespace HeyWindows.Core.Grammars;
 
 public static class GrammarUtils
 {
-    public static GrammarBuilder BuildGrammarFromCommand(this Command command)
+    public static GrammarBuilder BuildGrammarFromCommands(this IEnumerable<Command>? commands)
     {
-        ArgumentNullException.ThrowIfNull(command);
+        ArgumentNullException.ThrowIfNull(commands);
 
-        var commandBuilder = new GrammarBuilder(new Choices(command.Triggers.ToArray()));
+        var builder = new GrammarBuilder();
+        var choices = new Choices();
 
-        if (command.SubCommands.Count > 0)
+        foreach (var command in commands)
         {
-            var subCommandChoices = new Choices();
-
-            foreach (var subCommand in command.SubCommands)
-                subCommandChoices.Add(BuildGrammarFromCommand(subCommand));
-
-            commandBuilder.Append(subCommandChoices);
+            foreach (var trigger in command.Triggers)
+                choices.Add(trigger);
         }
-
-        return commandBuilder;
+        
+        builder.Append(choices);
+        return builder;
     }
 }

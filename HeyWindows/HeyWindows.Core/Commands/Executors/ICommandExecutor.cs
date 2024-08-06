@@ -2,7 +2,7 @@
 
 public interface ICommandArgs
 {
-    public static abstract ICommandArgs Parse(string[] words);
+    
 }
 
 public interface ICommandExecutor
