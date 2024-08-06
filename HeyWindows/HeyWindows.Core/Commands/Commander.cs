@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Speech.Recognition;
+using HeyWindows.Core.Commands.Executors;
 using HeyWindows.Core.Grammars;
 using HeyWindows.Core.Listeners;
 using HeyWindows.Core.Utils;
@@ -8,6 +9,14 @@ namespace HeyWindows.Core.Commands;
 
 public class Commander
 {
+    public static Dictionary<string, ICommandExecutor> ExecutorByName = new()
+    {
+        {
+            "Executable",
+            new ExecutableExecutor()
+        }
+    };
+    
     private readonly List<CommandContainer> _containers = new();
     
     public void InitializeContainer(CommandContainer container)
@@ -31,18 +40,25 @@ public class Commander
 
     public void Activate() => _listener!.Listen();
     
-    public void Execute(string phrase)
+    public void Execute(string phrase, string pronunciation)
     {
         foreach (var container in _containers)
         {
-            var commands = container.FindCommands(phrase);
+            var commands = container.FindCommands(phrase, pronunciation);
             if (commands.Count == 0)
                 continue;
 
             foreach (var command in commands)
             {
-                if (!command.TryExecute())
-                    LogError($"'{command.Name}' failed to execute. Check log for more information.");
+                try
+                {
+                    if (!command.TryExecute())
+                        LogError($"'{command.Name}' failed to execute. Check log for more information.");
+                }
+                catch (Exception ex)
+                {
+                    LogError(ex.ToString());
+                }
             }
         }
     }

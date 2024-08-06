@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Speech.Recognition;
 using HeyWindows.Core.Commands;
 using HeyWindows.Core.Utils;
+using Serilog;
 
 namespace HeyWindows.Core.Listeners;
 
@@ -22,8 +23,12 @@ public class Listener
     public void Initialize()
     {
         Recognizer.LoadGrammar(new DictationGrammar());
-        Grammars.Loop(x => Recognizer.LoadGrammar(new Grammar(x)));
-        Grammars.Clear();
+
+        if (Grammars.Count > 0)
+        {
+            Grammars.Loop(x => Recognizer.LoadGrammar(new Grammar(x)));
+            Grammars.Clear();
+        }
     }
 
     public void Listen()
@@ -35,21 +40,53 @@ public class Listener
         Console.WriteLine("Listening...\n");
     }
 
+    public string LastPhrase; 
+    public string LastPronunciation; 
+    
+    public async void ListenSingleAsync(Action<string, string> callback)
+    {
+        LogInfo("Listening...\n");
+        Recognizer.SpeechRecognized += (_, e) =>
+        {
+            LogInfo("==============================================");
+            LogInfo($"Recognized text: \"{e.Result.Text}\"");
+            LogInfo("Pronunciation: ");
+            var pronunciation = e.Result.Words.Select(x => x.Pronunciation).MergeStringArray();
+            LogInfo($"\"{pronunciation}\"");
+        
+            foreach (var phrase in e.Result.Alternates)
+            {
+                LogInfo("\nAlternative: ");
+                LogInfo($"\t- \"{phrase.Text}\"");
+                LogInfo($"\tPronunciation: \"{phrase.Words.Select( x=> x.Pronunciation).MergeStringArray()}\"");
+            }
+            LogInfo("==============================================");
+
+            LastPhrase = e.Result.Text;
+            LastPronunciation = pronunciation;
+            callback(LastPhrase, LastPronunciation);
+        };
+        
+        Recognizer.SetInputToDefaultAudioDevice();
+        Recognizer.RecognizeAsync();
+    }
+
     private void Recognizer_OnSpeechRecognized(object? sender, SpeechRecognizedEventArgs e)
     {
-        Console.WriteLine("==============================================");
-        Console.WriteLine($"Recognized text: \"{e.Result.Text}\"");
-        Console.WriteLine("Pronunciation: ");
-        Console.WriteLine($"{e.Result.Words.Select( x=> x.Pronunciation).MergeStringArray()}\"");
+        LogInfo("==============================================");
+        LogInfo($"Recognized text: \"{e.Result.Text}\"");
+        LogInfo("Pronunciation: ");
+        var pronunciation = e.Result.Words.Select(x => x.Pronunciation).MergeStringArray();
+        LogInfo($"\"{pronunciation}\"");
         
         foreach (var phrase in e.Result.Alternates)
         {
-            Console.WriteLine("\nAlternative: ");
-            Console.WriteLine($"\t- \"{phrase.Text}\"");
-            Console.WriteLine($"\tPronunciation: \"{phrase.Words.Select( x=> x.Pronunciation).MergeStringArray()}\"");
+            LogInfo("\nAlternative: ");
+            LogInfo($"\t- \"{phrase.Text}\"");
+            LogInfo($"\tPronunciation: \"{phrase.Words.Select( x=> x.Pronunciation).MergeStringArray()}\"");
         }
-        Console.WriteLine("==============================================");
+        LogInfo("==============================================");
 
-        CommandingCommander!.Execute(e.Result.Text);
+        CommandingCommander!.Execute(e.Result.Text, pronunciation);
     }
 }

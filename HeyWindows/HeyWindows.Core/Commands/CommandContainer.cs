@@ -7,6 +7,12 @@ public class CommandContainer
     public readonly string Name;
     public readonly List<Command> Commands = new();
 
+    public CommandContainer(string name, List<Command> commands)
+    {
+        Name = name;
+        Commands = commands;
+    }
+    
     public void EnableCommand(Command command)
     {
         Commands.DoFor(x => x == command, 
@@ -31,5 +37,5 @@ public class CommandContainer
         Commands.AddRange(commands);
     }
 
-    public List<Command> FindCommands(string trigger) => Commands.Where(x => x.Triggers.Contains(trigger)).ToList();
+    public List<Command> FindCommands(string trigger, string? pronunciation = null) => Commands.Where(x => x.IsCommand(trigger) || x.IsCommand(pronunciation)).ToList();
 }

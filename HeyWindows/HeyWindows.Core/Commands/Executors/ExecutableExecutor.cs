@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using HeyWindows.Core.Commands.Attributes;
-using HeyWindows.Core.Commands.Variables;
 using HeyWindows.Core.Utils;
 
 namespace HeyWindows.Core.Commands.Executors;
@@ -24,7 +23,7 @@ public class ExecutableExecutor : ICommandExecutor
 {
     public ICommandArgs ArgumentHandler { get; } = new ExecutableCommandArgs();
     
-    public string Name { get; set; } = "Process Executor";
+    public string Name { get; } = "ExecutableExecutor";
 
     public bool CanExecute(ICommandArgs args)
     {

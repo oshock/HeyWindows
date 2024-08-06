@@ -16,7 +16,7 @@ public static class GrammarUtils
         foreach (var command in commands)
         {
             foreach (var trigger in command.Triggers)
-                choices.Add(trigger);
+                choices.Add(trigger.Trigger);
         }
         
         builder.Append(choices);

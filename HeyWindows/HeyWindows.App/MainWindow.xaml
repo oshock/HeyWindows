@@ -5,22 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HeyWindows.App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="700" Width="1000"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        xmlns:userControls="clr-namespace:HeyWindows.App.UserControls">
+        xmlns:userControls="clr-namespace:HeyWindows.App.UserControls"
+        Background="#18191a"
+        Loaded="MainWindow_OnLoaded">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+
+        <Border Background="#256dd9" Width="100" Height="40" 
+                CornerRadius="10" HorizontalAlignment="Left" Margin="20" 
+                VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
+                        VerticalAlignment="Center">
+                <TextBlock Text="Add" FontSize="16" Margin="5"
+                           Foreground="White" FontWeight="450"/>
+            </StackPanel>
+        </Border>
         
-        <StackPanel Grid.Row="1">
-            <userControls:CommandControl/>
-        </StackPanel>
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="10, -10">
+            <StackPanel>
+                <userControls:CommandControl/>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

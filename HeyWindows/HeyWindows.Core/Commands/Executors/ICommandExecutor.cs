@@ -9,7 +9,7 @@ public interface ICommandExecutor
 {
     public ICommandArgs ArgumentHandler { get; }
     
-    public string Name { get; protected set; }
+    public string Name { get; }
     
     public bool TryExecute(ICommandArgs args)
     {
