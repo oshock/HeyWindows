@@ -45,9 +45,11 @@
             </StackPanel> 
             
             <StackPanel Grid.Row="1" Margin="10">
-                <ComboBox>
-                    <ComboBoxItem>Executable Launcher</ComboBoxItem>
+                <ComboBox x:Name="ActionType" SelectionChanged="ActionType_OnSelectionChanged">
+                    <ComboBoxItem Name="Executable">Executable Launcher</ComboBoxItem>
                 </ComboBox>
+                
+                <StackPanel Margin="5" x:Name="Arguments"/>
             </StackPanel>
         </Grid>
     </Border>

@@ -30,6 +30,12 @@ public class Commander
         _listener?.Initialize(); // Consume added grammars
     }
 
+    public void InitializeCommand(Command command)
+    {
+        var container = new CommandContainer(command.Name, command);
+        InitializeContainer(container);
+    }
+
     private Listener? _listener;
 
     public void Initialize()

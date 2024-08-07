@@ -33,6 +33,18 @@ public class Command
     [JsonIgnore]
     private ICommandExecutor? _executor; // Command action.. duh...
 
+    public ICommandArgs? Arguments; // Command action.. duh...
+    
+    public static Command Create(string executor, ICommandArgs arguments, List<CommandTrigger> triggers)
+    {
+        return new Command
+        {
+            Executor = executor,
+            Arguments = arguments,
+            Triggers = triggers
+        };
+    }
+    
     public string Executor
     {
         get
@@ -48,8 +60,6 @@ public class Command
             _executor = executor;
         }
     }
-    
-    public ICommandArgs? Arguments; // Command action.. duh...
     
     public bool IsActive = true;
 

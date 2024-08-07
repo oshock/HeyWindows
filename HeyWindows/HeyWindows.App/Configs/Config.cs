@@ -10,30 +10,30 @@ public class Config
     public List<Command>? Commands;
 }
 
-public static class ConfigReader
+public static class ConfigSystem
 {
-    public static string DIRECTORYPATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+    public static string DATA_DIRECTORYPATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "HeyWindows");
-    public static string FILENAME = "Config.json";
-    public static string FILEPATH = Path.Combine(DIRECTORYPATH, FILENAME);
+    public static string CONFIG_FILENAME = "Config.json";
+    public static string CONFIG_FILEPATH = Path.Combine(DATA_DIRECTORYPATH, CONFIG_FILENAME);
 
-    public static Config? Config;
+    public static Config? ConfigData;
 
-    public static Config Reload()
+    public static Config ReloadConfig()
     {
-        if (!File.Exists(FILEPATH))
-            Save();
+        if (!File.Exists(CONFIG_FILEPATH))
+            SaveConfig();
 
-        var text = File.ReadAllText(FILEPATH);
-        return Config = text.FromJson<Config>();
+        var text = File.ReadAllText(CONFIG_FILEPATH);
+        return ConfigData = text.FromJson<Config>();
     }
 
-    public static void Save()
+    public static void SaveConfig()
     {
-        if (!Directory.Exists(DIRECTORYPATH))
-            Directory.CreateDirectory(DIRECTORYPATH);
+        if (!Directory.Exists(DATA_DIRECTORYPATH))
+            Directory.CreateDirectory(DATA_DIRECTORYPATH);
 
-        var data = Config ?? new Config();
-        File.WriteAllText(FILEPATH, data.ToJsonString());
+        var data = ConfigData ?? new Config();
+        File.WriteAllText(CONFIG_FILEPATH, data.ToJsonString());
     }
 }
