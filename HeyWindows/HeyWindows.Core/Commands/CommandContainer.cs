@@ -37,5 +37,6 @@ public class CommandContainer
         Commands.AddRange(commands);
     }
 
-    public List<Command> FindCommands(string trigger, string? pronunciation = null) => Commands.Where(x => x.IsCommand(trigger) || x.IsCommand(pronunciation)).ToList();
+    public List<Command> FindCommands(string trigger, string? pronunciation = null) => Commands
+        .Where(x => (x.IsCommand(trigger) || x.IsCommand(pronunciation)) && x.IsActive).ToList();
 }

@@ -16,7 +16,7 @@ public partial class MainWindow : Window
         Logger.StartLogger(LOG_FILEPATH);
         InitializeComponent();
     }
-
+    
     public static Commander Commander = new();
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -28,17 +28,29 @@ public partial class MainWindow : Window
         var container = new CommandContainer("Commands", ConfigData.Commands);
         
         Commander.Initialize();
-        Commander.InitializeContainer(container);
+        Commander.InitializeContainer(container, true);
         Commander.Activate();
 
         foreach (var command in ConfigData.Commands)
         {
-            CommandsPanel.Children.Add(new CommandControl(command));
+            CommandsPanel.Children.Add(new CommandControl(command, RemoveCommand));
         }
     }
 
-    private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+    private void AddButton_OnClick(object sender, RoutedEventArgs e)
     {
         CommandsPanel.Children.Insert(0, new CommandControl());
+    }
+
+    public delegate void RemoveCallback(CommandControl command);
+    
+    public void RemoveCommand(CommandControl command)
+    {
+        if (command.LoadedCommand is null)
+            return;
+        
+        ConfigData!.Commands.Remove(command.LoadedCommand);
+        CommandsPanel.Children.Remove(command);
+        SaveConfig();
     }
 }

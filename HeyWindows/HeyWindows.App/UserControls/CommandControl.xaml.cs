@@ -22,10 +22,14 @@ public partial class CommandControl : UserControl
         InitializeComponent();
         IsUnsaved = false;
     }
+
+    private MainWindow.RemoveCallback Remove;
     
-    public CommandControl(Command command) : this()
+    public CommandControl(Command command, MainWindow.RemoveCallback callback) : this()
     {
         Command = command;
+        LoadedCommand = Command;
+        Remove = callback;
         ArgumentHandler = Command.Arguments;
         ActionType.SelectedItem = command.Executor switch
         {
@@ -51,7 +55,10 @@ public partial class CommandControl : UserControl
         MainWindow.Commander.InitializeCommand(newCommand);
 
         if (Command is not null)
+        {
+            MainWindow.Commander.DeinitializeCommand(Command);
             newCommand.SetOverrideGuid(Guid.Parse(Command.Id));
+        }
 
         var command = ConfigData!.Commands.FindIndex(x => x.Id == newCommand.Id);
         if (command >= 0)
@@ -63,11 +70,13 @@ public partial class CommandControl : UserControl
             ConfigData.Commands.Add(newCommand);
 
         SaveConfig();
-        
+
+        LoadedCommand = newCommand;
         IsUnsaved = false;
     }
     
     public Command? Command { get; set; }
+    public Command? LoadedCommand { get; set; }
     public string? ExecutorName;
     public ICommandArgs? ArgumentHandler { get; set; }
     public CommandTrigger? Trigger { get; protected set; }
@@ -334,7 +343,7 @@ public partial class CommandControl : UserControl
     
     private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
     {
-        // TODO
+        Remove(this);
     }
     
     private void RecordResult_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -345,6 +354,4 @@ public partial class CommandControl : UserControl
         var textBox = (TextBox)sender;
         Trigger.Trigger = textBox.Text;
     }
-
-    
 }
