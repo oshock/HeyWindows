@@ -20,6 +20,7 @@ public class Listener
     
     public void Initialize()
     {
+        Recognizer.UnloadAllGrammars();
         Recognizer.LoadGrammar(new DictationGrammar());
 
         if (Grammars.Count > 0)

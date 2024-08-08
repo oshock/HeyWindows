@@ -19,11 +19,17 @@ public class Commander
     public void InitializeContainer(CommandContainer container, bool isMainCommands = false)
     {
         CommandContainer = container;
+        
         if (_listener is null)
             throw new InvalidOperationException("Cannot add commands without a valid listener.");
-        
-        if (container.Commands.Count > 0)
-            _listener?.Grammars.Add(container.Commands.BuildGrammarFromCommands());
+
+        InitializeGrammars();
+    }
+
+    public void InitializeGrammars()
+    {
+        if (CommandContainer!.Commands.Count > 0)
+            _listener?.Grammars.Add(CommandContainer.Commands.BuildGrammarFromCommands());
 
         _listener?.Initialize(); // Consume added grammars
     }
@@ -31,11 +37,13 @@ public class Commander
     public void InitializeCommand(Command command)
     {
         CommandContainer!.Commands.Add(command);
+        InitializeGrammars();
     }
     
     public void DeinitializeCommand(Command command)
     {
         CommandContainer!.Commands.Remove(command);
+        InitializeGrammars();
     }
 
     private Listener? _listener;
