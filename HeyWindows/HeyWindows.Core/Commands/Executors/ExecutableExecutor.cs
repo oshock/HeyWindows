@@ -7,7 +7,7 @@ namespace HeyWindows.Core.Commands.Executors;
 
 public class ExecutableCommandArgs : ICommandArgs
 {
-    [ArgumentField("Executable File Location", "The path of the .exe file that will be executed.")]
+    [ArgumentField("Executable File Location", "The path of the .exe file that will be executed.", "C:\\Folder\\File.exe...", InputType.File)]
     public string FilePath;
     
     [ArgumentField("Arguments", "The arguments that the executable will startup with.")]

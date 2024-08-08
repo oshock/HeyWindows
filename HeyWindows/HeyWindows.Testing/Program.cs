@@ -1,5 +1,4 @@
 ﻿using HeyWindows.Core.Commands;
-using HeyWindows.Core.Commands.Executors;
 using HeyWindows.Core.Logging;
 
 Logger.StartLogger("test.log");

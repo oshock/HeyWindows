@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Text.Json.Serialization;
 using HeyWindows.Core.Commands;
 using HeyWindows.Core.Utils;
 
@@ -16,6 +15,9 @@ public static class ConfigSystem
         "HeyWindows");
     public static string CONFIG_FILENAME = "Config.json";
     public static string CONFIG_FILEPATH = Path.Combine(DATA_DIRECTORYPATH, CONFIG_FILENAME);
+
+    public static string LOG_FILENAME = $"HeyWindows-{DateTime.UtcNow.ToString().Replace("/", "-")}.log";
+    public static string LOG_FILEPATH = Path.Combine(DATA_DIRECTORYPATH, LOG_FILENAME);
 
     public static Config? ConfigData;
 

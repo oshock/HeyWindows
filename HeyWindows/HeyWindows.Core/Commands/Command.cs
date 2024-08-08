@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using HeyWindows.Core.Commands.Executors;
 using HeyWindows.Core.Utils;
@@ -42,19 +39,42 @@ public class Command
 
     public ICommandArgs? Arguments; // Command action.. duh...
 
+    [JsonIgnore]
+    private Guid? _overrideGuid;
+    
     public Guid GetGuid()
     {
+        if (_overrideGuid is not null)
+            return _overrideGuid.Value;
+        
         if (Triggers.Count == 0)
             throw new NotSupportedException("Cannot create guid without any triggers to the command.");
 
         var trigger = Triggers.First();
+        var guid = CalculateGuid(trigger.Trigger ?? string.Empty, trigger.Pronunciation ?? string.Empty);
+        
+        return guid;
+    }
+
+    private Guid CalculateGuid(string str0, string str1)
+    {
         var hash = SHA256.HashData(
-            Encoding.UTF8.GetBytes((trigger.Trigger ?? string.Empty) + (trigger.Pronunciation ?? string.Empty)));
+            Encoding.UTF8.GetBytes(str0 + str1));
 
         var guid = new Guid(hash.SelectRange(0, 15));
         return guid;
     }
 
+    public void SetOverrideGuid(Guid guid)
+    {
+        _overrideGuid = guid;
+    }
+    
+    public void RemoveOverrideGuid()
+    {
+        _overrideGuid = null;
+    }
+    
     public static Command Create(string executor, ICommandArgs arguments, List<CommandTrigger> triggers)
     {
         return new Command

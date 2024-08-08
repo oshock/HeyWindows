@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Speech.Recognition;
 using HeyWindows.Core.Commands;
 using HeyWindows.Core.Utils;
-using Serilog;
 
 namespace HeyWindows.Core.Listeners;
 

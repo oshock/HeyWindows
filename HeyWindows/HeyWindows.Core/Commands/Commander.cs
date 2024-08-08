@@ -1,9 +1,6 @@
-﻿using System.Data;
-using System.Speech.Recognition;
-using HeyWindows.Core.Commands.Executors;
+﻿using HeyWindows.Core.Commands.Executors;
 using HeyWindows.Core.Grammars;
 using HeyWindows.Core.Listeners;
-using HeyWindows.Core.Utils;
 
 namespace HeyWindows.Core.Commands;
 

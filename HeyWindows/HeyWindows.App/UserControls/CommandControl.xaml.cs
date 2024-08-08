@@ -1,17 +1,14 @@
 ﻿using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using HeyWindows.App.Configs;
 using HeyWindows.Core.Commands;
-using HeyWindows.Core.Commands.Attributes;
 using HeyWindows.Core.Commands.Executors;
-using HeyWindows.Core.Listeners;
 using HeyWindows.Core.Utils;
-using Wpf.Ui.Controls;
+using Microsoft.Win32;
+using InputType = HeyWindows.Core.Commands.Attributes.InputType;
 using TextBlock = Wpf.Ui.Controls.TextBlock;
 using TextBox = Wpf.Ui.Controls.TextBox;
 
@@ -29,23 +26,42 @@ public partial class CommandControl : UserControl
     public CommandControl(Command command) : this()
     {
         Command = command;
+        ArgumentHandler = Command.Arguments;
+        ActionType.SelectedItem = command.Executor switch
+        {
+            "Executable" => Executable,
+            _ => throw new KeyNotFoundException()
+        };
+
+        RecordResult.Text = Command.Triggers.First().Trigger;
     }
 
-    public void UploadCommand()
+    private void UploadCommand()
     {
         if (ExecutorName is null)
-            throw new InvalidDataException("Cannot create command when is null");
+            throw new InvalidDataException("Cannot create command when ExecutorName is null");
         
         if (ArgumentHandler is null)
-            throw new InvalidDataException("Cannot create command when is null");
+            throw new InvalidDataException("Cannot create command when ArgumentHandler is null");
         
         if (Trigger is null)
-            throw new InvalidDataException("Cannot create command when is null");
+            throw new InvalidDataException("Cannot create command when Trigger is null");
         
-        Command = Command.Create(ExecutorName, ArgumentHandler, new List<CommandTrigger> { Trigger });
-        MainWindow.Commander.InitializeCommand(Command);
+        var newCommand = Command.Create(ExecutorName, ArgumentHandler, new List<CommandTrigger> { Trigger });
+        MainWindow.Commander.InitializeCommand(newCommand);
 
-        ConfigData!.Commands.Add(Command);
+        if (Command is not null)
+            newCommand.SetOverrideGuid(Guid.Parse(Command.Id));
+
+        var command = ConfigData!.Commands.FindIndex(x => x.Id == newCommand.Id);
+        if (command >= 0)
+        {
+            ConfigData.Commands.RemoveAt(command);
+            ConfigData.Commands.Insert(command, newCommand);
+        }
+        else
+            ConfigData.Commands.Add(newCommand);
+
         SaveConfig();
         
         IsUnsaved = false;
@@ -58,30 +74,6 @@ public partial class CommandControl : UserControl
     
     private bool _isRecording;
 
-    /*private void Record_OnClick(object sender, MouseButtonEventArgs e)
-    {
-        if (_isRecording)
-            return;
-        
-        _isRecording = true;
-        recordText.Foreground = new SolidColorBrush(Colors.Red);
-        recordButton.Foreground = new SolidColorBrush(Colors.Red);
-        recordButton.Symbol = SymbolRegular.RecordStop20;
-
-        var listener = new Listener();
-        listener.Initialize();
-        listener.ListenSingleAsync((phrase, pronunciation) =>
-        {
-            Trigger = new CommandTrigger(null, pronunciation);
-            RecordResult.Text = phrase;
-        
-            _isRecording = false;
-            recordText.Foreground = new SolidColorBrush(Colors.White);
-            recordButton.Foreground = new SolidColorBrush(Colors.White);
-            recordButton.Symbol = SymbolRegular.Record20;
-        });
-    }*/
-
     private void Border_OnMouseEnter(object sender, MouseEventArgs e)
     {
         ((Border)sender).Background = new SolidColorBrush(Color.FromArgb(20, 255, 255, 255));
@@ -93,40 +85,34 @@ public partial class CommandControl : UserControl
     }
 
     private bool _isUnsaved;
-    
     private bool IsUnsaved
     {
         get => _isUnsaved;
         set
         {
             _isUnsaved = value;
-            SaveChanges.Background = value ? new SolidColorBrush(Color.FromRgb(44, 160, 209))
-                : SaveChanges.Background = new SolidColorBrush(Color.FromArgb(10, 255, 255, 255));
+            SaveButton.Background = IsUnsaved ? new SolidColorBrush(Color.FromRgb(47, 119, 227))
+                    : new SolidColorBrush(Color.FromArgb(10, 255, 255, 255));
         }
-    }
-    
-    private void SaveButton_OnMouseEnter(object sender, MouseEventArgs e)
-    {
-        if (IsUnsaved)
-            ((Border)sender).Background = new SolidColorBrush(Color.FromArgb(20, 49, 165, 214));
-    }
-
-    private void SaveButton_OnMouseLeave(object sender, MouseEventArgs e)
-    {
-        if (IsUnsaved) 
-            ((Border)sender).Background = new SolidColorBrush(Color.FromArgb(255, 44, 160, 209));
     }
 
     private void ActionType_OnSelectionChanged(object obj, SelectionChangedEventArgs e)
     {
+        IsUnsaved = true;
         Arguments.Children.Clear();
 
         ExecutorName = ActionType.SelectedItem.Cast<ComboBoxItem>()!.Name;
-        ArgumentHandler = ExecutorName switch
+        if (Command is null)
         {
-            "Executable" => new ExecutableExecutor().ArgumentHandler,
-            _ => throw new KeyNotFoundException()
-        };
+            ArgumentHandler = ExecutorName switch
+            {
+                "Executable" => new ExecutableExecutor().ArgumentHandler,
+                _ => throw new KeyNotFoundException()
+            };
+        }
+
+        if (ArgumentHandler is null)
+            throw new NullReferenceException("ArgumentHandler is null but Command is not.");
         
         var fields = ArgumentHandler.GetType().GetFields();
         foreach (var field in fields)
@@ -154,7 +140,7 @@ public partial class CommandControl : UserControl
                 subPanel.Children.Add(new TextBlock
                 {
                     Text = argumentInfo.Description, 
-                    Foreground = Brushes.White,
+                    Foreground = new SolidColorBrush(Color.FromArgb(200,255,255,255)),
                     Margin = new Thickness(0, 0, 0, 8)
                 });
             
@@ -181,10 +167,74 @@ public partial class CommandControl : UserControl
                     }
                 };
                 
+                textBox.Loaded += (_, _) =>
+                {
+                    if (Command is null || ArgumentHandler is null)
+                        return;
+
+                    textBox.Text = (string)field.GetValue(ArgumentHandler)!;
+                    IsUnsaved = false;
+                };
+                
                 if (!string.IsNullOrEmpty(argumentInfo.Placeholder))
                     textBox.PlaceholderText = argumentInfo.Placeholder;
 
-                subPanel.Children.Add(textBox);
+                switch (argumentInfo.Type)
+                {
+                    case InputType.File:
+                    {
+                        var grid = new Grid();
+                        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(10) });
+                        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+
+                        var button = new Button
+                        {
+                            Content = "...",
+                            Background = new SolidColorBrush(Color.FromArgb(10, 255, 255, 255)),
+                            Foreground = Brushes.White,
+                            Name = argumentInfo.DisplayName.MakeFriendly() + "_button"
+                        };
+
+                        grid.Children.Add(textBox);
+                        grid.Children.Add(button);
+                        subPanel.Children.Add(grid);
+                        Grid.SetColumn(button, 2);
+
+                        button.Click += (s, e) =>
+                        {
+                            var dialog = new OpenFileDialog { Filter = "Executable Files (*.exe)|*.exe" };
+                            var result = dialog.ShowDialog();
+                            if (!result.HasValue || !result.Value)
+                                return;
+                            
+                            IsUnsaved = true;
+                            var sender = (Button)s;
+                            var name = sender.Name.Replace("_button", string.Empty);
+                            var handlerFields = ArgumentHandler.GetType().GetFields();
+                            
+                            
+                            foreach (var f in handlerFields)
+                            {
+                                var info = f.GetArgumentAttribute();
+                                if (info.DisplayName.MakeFriendly() != name)
+                                    continue;
+
+                                if (f.FieldType != typeof(string))
+                                    throw new InvalidDataException($"'{info.DisplayName}' is not a string. Unable to set.");
+
+                                textBox.Text = dialog.FileName;
+                                return;
+                            }
+                        };
+                    }
+                        break;
+                    case InputType.Directory:
+                        break;
+                    case InputType.Regular:
+                        subPanel.Children.Add(textBox);
+                        break;
+                }
             }
             else if (field.FieldType == typeof(bool))
             {
@@ -254,16 +304,47 @@ public partial class CommandControl : UserControl
         }
     }
 
-    private void SaveButton_OnClick(object sender, MouseButtonEventArgs e)
+    private void SaveButton_OnMouseEnter(object sender, MouseEventArgs e)
     {
-        UploadCommand();
+        if (IsUnsaved)
+            SaveButton.Background = new SolidColorBrush(Color.FromRgb(67, 139, 247));
     }
 
+    private void SaveButton_OnMouseLeave(object sender, MouseEventArgs e)
+    {
+        if (IsUnsaved) 
+            SaveButton.Background = new SolidColorBrush(Color.FromRgb(37, 109, 217));
+    }
+    
+    private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (IsUnsaved)
+            UploadCommand();
+    }
+
+    private void DeleteButton_OnMouseEnter(object sender, MouseEventArgs e)
+    {
+        DeleteButton.Background = new SolidColorBrush(Color.FromRgb(255, 87, 87));
+    }
+
+    private void DeleteButton_OnMouseLeave(object sender, MouseEventArgs e)
+    {
+        DeleteButton.Background = new SolidColorBrush(Color.FromRgb(237, 57, 57));
+    }
+    
+    private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        // TODO
+    }
+    
     private void RecordResult_OnTextChanged(object sender, TextChangedEventArgs e)
     {
+        IsUnsaved = true;
         Trigger ??= new CommandTrigger();
 
         var textBox = (TextBox)sender;
         Trigger.Trigger = textBox.Text;
     }
+
+    
 }

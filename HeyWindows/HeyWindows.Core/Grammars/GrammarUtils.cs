@@ -1,6 +1,5 @@
 ﻿using System.Speech.Recognition;
 using HeyWindows.Core.Commands;
-using HeyWindows.Core.Utils;
 
 namespace HeyWindows.Core.Grammars;
 

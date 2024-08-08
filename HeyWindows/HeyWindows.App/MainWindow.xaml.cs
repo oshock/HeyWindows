@@ -1,6 +1,6 @@
 ﻿global using static HeyWindows.App.Configs.ConfigSystem;
 using System.Windows;
-using HeyWindows.App.Configs;
+using HeyWindows.App.UserControls;
 using HeyWindows.Core.Commands;
 using HeyWindows.Core.Logging;
 
@@ -13,21 +13,32 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        Logger.StartLogger("test.log");
+        Logger.StartLogger(LOG_FILEPATH);
         InitializeComponent();
     }
 
-    public static Commander Commander;
+    public static Commander Commander = new();
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
         ReloadConfig();
+        if (ConfigData is null)
+            throw new NullReferenceException($"Config is null. '{CONFIG_FILEPATH}'");
         
-        Commander = new Commander();
-        var container = new CommandContainer("Commands", ConfigData!.Commands);
+        var container = new CommandContainer("Commands", ConfigData.Commands);
         
         Commander.Initialize();
         Commander.InitializeContainer(container);
         Commander.Activate();
+
+        foreach (var command in ConfigData.Commands)
+        {
+            CommandsPanel.Children.Add(new CommandControl(command));
+        }
+    }
+
+    private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        CommandsPanel.Children.Insert(0, new CommandControl());
     }
 }
