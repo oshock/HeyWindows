@@ -13,8 +13,6 @@ public class Commander
             new ExecutableExecutor()
         }
     };
-
-    public string? MainCommandsContainer;
     
     public CommandContainer? CommandContainer;
     
@@ -28,9 +26,6 @@ public class Commander
             _listener?.Grammars.Add(container.Commands.BuildGrammarFromCommands());
 
         _listener?.Initialize(); // Consume added grammars
-        
-        if (isMainCommands)
-            MainCommandsContainer = container.Name;
     }
 
     public void InitializeCommand(Command command)

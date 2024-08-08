@@ -5,10 +5,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using HeyWindows.Core.Commands;
+using HeyWindows.Core.Commands.Attributes;
 using HeyWindows.Core.Commands.Executors;
 using HeyWindows.Core.Utils;
 using Microsoft.Win32;
-using InputType = HeyWindows.Core.Commands.Attributes.InputType;
 using TextBlock = Wpf.Ui.Controls.TextBlock;
 using TextBox = Wpf.Ui.Controls.TextBox;
 
@@ -50,6 +50,16 @@ public partial class CommandControl : UserControl
         
         if (Trigger is null)
             throw new InvalidDataException("Cannot create command when Trigger is null");
+
+        foreach (var field in ArgumentHandler.GetType().GetFields())
+        {
+            var argumentInfo = field.GetArgumentAttribute();
+            if (argumentInfo.Type != StringInputType.File && argumentInfo.Type != StringInputType.Directory)
+                continue;
+
+            var text = (string)field.GetValue(ArgumentHandler)!;
+            field.SetValue(ArgumentHandler, text.Replace("/", "\\").Replace("\"", string.Empty));
+        }
         
         var newCommand = Command.Create(ExecutorName, ArgumentHandler, new List<CommandTrigger> { Trigger });
         MainWindow.Commander.InitializeCommand(newCommand);
@@ -156,6 +166,7 @@ public partial class CommandControl : UserControl
             if (field.FieldType == typeof(string))
             {
                 var textBox = new TextBox { Name = argumentInfo.DisplayName.MakeFriendly() };
+                
                 textBox.TextChanged += (s, _) =>
                 {
                     IsUnsaved = true;
@@ -190,7 +201,7 @@ public partial class CommandControl : UserControl
 
                 switch (argumentInfo.Type)
                 {
-                    case InputType.File:
+                    case StringInputType.File:
                     {
                         var grid = new Grid();
                         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -238,9 +249,9 @@ public partial class CommandControl : UserControl
                         };
                     }
                         break;
-                    case InputType.Directory:
+                    case StringInputType.Directory:
                         break;
-                    case InputType.Regular:
+                    case StringInputType.Regular:
                         subPanel.Children.Add(textBox);
                         break;
                 }

@@ -1,6 +1,6 @@
 ﻿namespace HeyWindows.Core.Commands.Attributes;
 
-public enum InputType
+public enum StringInputType
 {
     Regular,
     File,
@@ -13,9 +13,9 @@ public class ArgumentFieldAttribute : Attribute
     public string DisplayName { get; }
     public string? Description { get; }
     public string? Placeholder { get; }
-    public InputType Type { get; }
+    public StringInputType Type { get; }
 
-    public ArgumentFieldAttribute(string DisplayName, string? Description = null, string? Placeholder = null, InputType Type = InputType.Regular)
+    public ArgumentFieldAttribute(string DisplayName, string? Description = null, string? Placeholder = null, StringInputType Type = StringInputType.Regular)
     {
         this.DisplayName = DisplayName;
         this.Description = Description;
