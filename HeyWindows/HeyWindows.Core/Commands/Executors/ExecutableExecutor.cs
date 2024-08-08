@@ -23,7 +23,7 @@ public class ExecutableExecutor : ICommandExecutor
 {
     public ICommandArgs ArgumentHandler { get; } = new ExecutableCommandArgs();
     
-    public string Name { get; } = "ExecutableExecutor";
+    public string Name => "ExecutableExecutor";
 
     public bool CanExecute(ICommandArgs args)
     {

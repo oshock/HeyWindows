@@ -7,7 +7,7 @@ namespace HeyWindows.App.Configs;
 
 public class Config
 {
-    public List<Command>? Commands;
+    public List<Command> Commands = new();
 }
 
 public static class ConfigSystem

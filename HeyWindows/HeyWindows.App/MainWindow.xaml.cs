@@ -22,7 +22,7 @@ public partial class MainWindow : Window
         ReloadConfig();
         
         Commander = new Commander();
-        var container = new CommandContainer("Commands", ConfigSystem.ConfigData?.Commands ?? new List<Command>());
+        var container = new CommandContainer("Commands", ConfigData!.Commands);
         container.Commands.Add(new Command()
         {
             Triggers = new()
