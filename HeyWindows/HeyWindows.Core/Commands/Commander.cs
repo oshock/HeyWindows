@@ -25,14 +25,16 @@ public class Commander
             throw new InvalidOperationException("Cannot add commands without a valid listener.");
 
         _containers.Add(container);
-        _listener?.Grammars.Add(container.Commands.BuildGrammarFromCommands());
+        
+        if (container.Commands.Count > 0)
+            _listener?.Grammars.Add(container.Commands.BuildGrammarFromCommands());
 
         _listener?.Initialize(); // Consume added grammars
     }
 
     public void InitializeCommand(Command command)
     {
-        var container = new CommandContainer(command.Name, command);
+        var container = new CommandContainer(command.Id, command);
         InitializeContainer(container);
     }
 
@@ -59,7 +61,7 @@ public class Commander
                 try
                 {
                     if (!command.TryExecute())
-                        LogError($"'{command.Name}' failed to execute. Check log for more information.");
+                        LogError($"Command '{command.Id}' failed to execute. Check log for more information.");
                 }
                 catch (Exception ex)
                 {

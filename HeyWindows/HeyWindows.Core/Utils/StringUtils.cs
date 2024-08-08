@@ -7,4 +7,6 @@ public static class StringUtils
         var i = str.IndexOf(delimiter, StringComparison.Ordinal);
         return i > 0 ? str.Substring(i + delimiter.Length) : string.Empty;
     }
+
+    public static string MakeFriendly(this string str) => str.Replace(" ", "_");
 }

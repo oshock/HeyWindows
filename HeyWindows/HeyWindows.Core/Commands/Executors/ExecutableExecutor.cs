@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using HeyWindows.Core.Commands.Attributes;
 using HeyWindows.Core.Utils;
+using Newtonsoft.Json;
 
 namespace HeyWindows.Core.Commands.Executors;
 
@@ -17,6 +18,17 @@ public class ExecutableCommandArgs : ICommandArgs
     
     [ArgumentField("Wait For Exit", "Should we wait for the process to exit before executing more commands?")]
     public bool WaitForExit;
+
+    public ExecutableCommandArgs() { }
+    
+    [JsonConstructor]
+    public ExecutableCommandArgs(string FilePath, string Args, bool Elevated, bool WaitForExit)
+    {
+        this.FilePath = FilePath;
+        this.Args = Args;
+        this.Elevated = Elevated;
+        this.WaitForExit = WaitForExit;
+    }
 }
 
 public class ExecutableExecutor : ICommandExecutor

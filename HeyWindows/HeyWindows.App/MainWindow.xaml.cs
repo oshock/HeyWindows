@@ -2,6 +2,7 @@
 using System.Windows;
 using HeyWindows.App.Configs;
 using HeyWindows.Core.Commands;
+using HeyWindows.Core.Logging;
 
 namespace HeyWindows.App;
 
@@ -12,6 +13,7 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
+        Logger.StartLogger("test.log");
         InitializeComponent();
     }
 
@@ -23,13 +25,6 @@ public partial class MainWindow : Window
         
         Commander = new Commander();
         var container = new CommandContainer("Commands", ConfigData!.Commands);
-        container.Commands.Add(new Command()
-        {
-            Triggers = new()
-            {
-                new CommandTrigger("Root")
-            }
-        });
         
         Commander.Initialize();
         Commander.InitializeContainer(container);
