@@ -10,6 +10,9 @@ public class ExecutableCommandArgs : ICommandArgs
     [ArgumentField("Executable File Location", "The path of the .exe file that will be executed.", "C:\\Folder\\File.exe...", StringInputType.File)]
     public string FilePath;
     
+    [ArgumentField("Executing Directory", "The working directory which the .exe will start in.", "C:\\Folder", StringInputType.Directory)]
+    public string WorkingDirectory;
+    
     [ArgumentField("Arguments", "The arguments that the executable will startup with.")]
     public string Args;
     
@@ -51,13 +54,15 @@ public class ExecutableExecutor : ICommandExecutor
             var startInfo = new ProcessStartInfo
             {
                 FileName = exeArgs.FilePath,
-                Arguments = exeArgs.Args
+                Arguments = exeArgs.Args,
+                WorkingDirectory = exeArgs.WorkingDirectory,
+                CreateNoWindow = false
             };
 
             if (exeArgs.Elevated)
             {
                 startInfo.Verb = "runas";
-                startInfo.UseShellExecute = true;
+                startInfo.UseShellExecute = false;
             }
 
             var proc = Process.Start(startInfo)!;

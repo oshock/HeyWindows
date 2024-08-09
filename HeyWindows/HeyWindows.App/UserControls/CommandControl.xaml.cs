@@ -203,6 +203,7 @@ public partial class CommandControl : UserControl
                 switch (argumentInfo.Type)
                 {
                     case StringInputType.File:
+                    case StringInputType.Directory:
                     {
                         var grid = new Grid();
                         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -224,10 +225,15 @@ public partial class CommandControl : UserControl
 
                         button.Click += (s, e) =>
                         {
-                            var dialog = new OpenFileDialog { Filter = "Executable Files (*.exe)|*.exe" };
+                            var isFile = argumentInfo.Type == StringInputType.File;
+                            dynamic dialog = isFile
+                                ? new OpenFileDialog { Filter = "Executable Files (*.exe)|*.exe" }
+                                : new OpenFolderDialog();
+                            
                             var result = dialog.ShowDialog();
-                            if (!result.HasValue || !result.Value)
+                            if (!result)
                                 return;
+                            
                             
                             IsUnsaved = true;
                             var sender = (Button)s;
@@ -244,13 +250,11 @@ public partial class CommandControl : UserControl
                                 if (f.FieldType != typeof(string))
                                     throw new InvalidDataException($"'{info.DisplayName}' is not a string. Unable to set.");
 
-                                textBox.Text = dialog.FileName;
+                                textBox.Text = isFile ? dialog.FileName : dialog.FolderName;
                                 return;
                             }
                         };
                     }
-                        break;
-                    case StringInputType.Directory:
                         break;
                     case StringInputType.Regular:
                         subPanel.Children.Add(textBox);
