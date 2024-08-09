@@ -75,6 +75,7 @@ public partial class CommandControl : UserControl
         {
             ConfigData.Commands.RemoveAt(command);
             ConfigData.Commands.Insert(command, newCommand);
+            Command = newCommand;
         }
         else
             ConfigData.Commands.Add(newCommand);
