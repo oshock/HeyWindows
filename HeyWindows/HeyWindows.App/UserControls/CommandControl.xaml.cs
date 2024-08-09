@@ -283,6 +283,15 @@ public partial class CommandControl : UserControl
                         return;
                     }
                 }
+                
+                checkBox.Loaded += (_, _) =>
+                {
+                    if (Command is null || ArgumentHandler is null)
+                        return;
+
+                    checkBox.IsChecked = (bool)field.GetValue(ArgumentHandler)!;
+                    IsUnsaved = false;
+                };
 
                 checkBox.Checked += (s, _) => setValue(s);
                 checkBox.Unchecked += (s, _) => setValue(s);
@@ -292,6 +301,9 @@ public partial class CommandControl : UserControl
             else if (field.FieldType == typeof(int))
             {
                 var textBox = new TextBox { Name = argumentInfo.DisplayName.MakeFriendly() };
+                if (!string.IsNullOrEmpty(argumentInfo.Placeholder))
+                    textBox.PlaceholderText = argumentInfo.Placeholder;
+                
                 textBox.PreviewTextInput += (_, e) =>
                 {
                     var regex = new Regex("[^0-9.-]+");
@@ -300,6 +312,10 @@ public partial class CommandControl : UserControl
                 
                 textBox.TextChanged += (s, _) =>
                 {
+                    var regex = new Regex("[^0-9.-]+");
+                    if (!regex.IsMatch(textBox.Text))
+                        return;
+                        
                     IsUnsaved = true;
                     var sender = (TextBox)s;
                     var handlerFields = ArgumentHandler.GetType().GetFields();
@@ -310,7 +326,7 @@ public partial class CommandControl : UserControl
                         if (info.DisplayName.MakeFriendly() != sender.Name)
                             continue;
 
-                        if (f.FieldType != typeof(string))
+                        if (f.FieldType != typeof(int))
                             throw new InvalidDataException($"'{info.DisplayName}' is not a string. Unable to set.");
 
                         if (!int.TryParse(sender.Text, out var number))
@@ -320,6 +336,15 @@ public partial class CommandControl : UserControl
                         f.SetValue(ArgumentHandler, number);
                         return;
                     }
+                };
+                
+                textBox.Loaded += (_, _) =>
+                {
+                    if (Command is null || ArgumentHandler is null)
+                        return;
+
+                    textBox.Text = Convert.ToString((int)field.GetValue(ArgumentHandler)!);
+                    IsUnsaved = false;
                 };
                 
                 subPanel.Children.Add(textBox);
