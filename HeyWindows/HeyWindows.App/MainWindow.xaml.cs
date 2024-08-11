@@ -1,6 +1,9 @@
 ﻿global using static HeyWindows.App.Configs.ConfigSystem;
 global using static HeyWindows.Core.Logging.Logger;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using HeyWindows.App.UserControls;
 using HeyWindows.Core.Commands;
 using HeyWindows.Core.Logging;
@@ -62,5 +65,15 @@ public partial class MainWindow : Window
         
         SaveConfig();
         CommandCountCheck();
+    }
+    
+    private void AddButton_MouseEnter(object sender, MouseEventArgs e)
+    {
+        ((Button)sender).Background = new SolidColorBrush(Color.FromRgb(77, 149, 255));
+    }
+
+    private void AddButton_MouseLeave(object sender, MouseEventArgs e)
+    {
+        ((Button)sender).Background = new SolidColorBrush(Color.FromRgb(37, 109, 217));
     }
 }

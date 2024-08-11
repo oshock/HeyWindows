@@ -21,7 +21,9 @@
                 Background="#256dd9" Margin="20" MinWidth="90"
                 Width="60" Height="40" 
                 x:Name="SaveButton"
-                Click="AddButton_OnClick">Add</Button>
+                Click="AddButton_OnClick"
+                MouseEnter="AddButton_MouseEnter"
+                MouseLeave="AddButton_MouseLeave">Add</Button>
         
         <ScrollViewer Grid.Row="1" Margin="10, -10">
             <StackPanel x:Name="CommandsPanel">
