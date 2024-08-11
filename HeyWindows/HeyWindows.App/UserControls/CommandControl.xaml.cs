@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using HeyWindows.App.Utils;
 using HeyWindows.Core.Commands;
 using HeyWindows.Core.Commands.Attributes;
 using HeyWindows.Core.Commands.Executors;
@@ -304,18 +305,32 @@ public partial class CommandControl : UserControl
                 if (!string.IsNullOrEmpty(argumentInfo.Placeholder))
                     textBox.PlaceholderText = argumentInfo.Placeholder;
                 
-                textBox.PreviewTextInput += (_, e) =>
+                bool IsNumber(string text)
                 {
                     var regex = new Regex("[^0-9.-]+");
-                    e.Handled = regex.IsMatch(e.Text);
+                    return regex.IsMatch(text);
+                }
+                
+                textBox.PreviewTextInput += (_, e) =>
+                {
+                    e.Handled = IsNumber(e.Text);
                 };
                 
                 textBox.TextChanged += (s, _) =>
                 {
-                    var regex = new Regex("[^0-9.-]+");
-                    if (!regex.IsMatch(textBox.Text))
-                        return;
-                        
+                    // https://karlhulme.wordpress.com/2007/02/15/masking-input-to-a-wpf-textbox/
+                    var selectionStart = textBox.SelectionStart;
+                    var newText = string.Empty;
+                    foreach (var c in textBox.Text)
+                    {
+                        if (char.IsDigit(c) || char.IsControl(c))
+                            newText += c;
+                    }
+
+                    textBox.Text = newText;
+                    textBox.SelectionStart =
+                        selectionStart <= textBox.Text.Length ? selectionStart : textBox.Text.Length;
+                    
                     IsUnsaved = true;
                     var sender = (TextBox)s;
                     var handlerFields = ArgumentHandler.GetType().GetFields();
@@ -330,9 +345,25 @@ public partial class CommandControl : UserControl
                             throw new InvalidDataException($"'{info.DisplayName}' is not a string. Unable to set.");
 
                         if (!int.TryParse(sender.Text, out var number))
-                            throw new InvalidDataException(
-                                $"TextBox '{info.DisplayName}' does not contain a int32 value. This shouldn't be possible??");
-                            
+                        {
+                            LogWarn($"TextBox '{info.DisplayName}' tried to enter non-int32 value. '{sender.Text}'");
+
+                            var oldText = sender.Text;
+                            sender.Text = string.Empty;
+                            sender.PlaceholderText = string.IsNullOrEmpty(oldText) ? "Please enter a valid integer." : $"'{oldText}' is not a valid integer (int32).";
+
+                            if (argumentInfo.Placeholder is not null)
+                            {
+                                TaskUtils.StartTaskWithDelay(
+                                    () =>
+                                    {
+                                        Dispatcher.Invoke(() => textBox.PlaceholderText = argumentInfo.Placeholder);
+                                    }, 2000);
+                            }
+
+                            return;
+                        }
+
                         f.SetValue(ArgumentHandler, number);
                         return;
                     }

@@ -20,8 +20,8 @@ public class ExecutableCommandArgs : ICommandArgs
     public bool Elevated;
     
     [ArgumentField("Wait For Exit", "Should we wait for the process to exit before executing more commands?")]
-    public bool WaitForExit;
-
+    public bool WaitForExit; 
+    
     public ExecutableCommandArgs() { }
     
     [JsonConstructor]
