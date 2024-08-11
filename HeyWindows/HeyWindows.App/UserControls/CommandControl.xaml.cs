@@ -26,11 +26,14 @@ public partial class CommandControl : UserControl
 
     private MainWindow.RemoveCallback Remove;
     
-    public CommandControl(Command command, MainWindow.RemoveCallback callback) : this()
+    public CommandControl(Command? command, MainWindow.RemoveCallback callback) : this()
     {
+        Remove = callback;
+        if (command is null)
+            return;
+        
         Command = command;
         LoadedCommand = Command;
-        Remove = callback;
         ArgumentHandler = Command.Arguments;
         ActionType.SelectedItem = command.Executor switch
         {
@@ -58,8 +61,9 @@ public partial class CommandControl : UserControl
             if (argumentInfo.Type != StringInputType.File && argumentInfo.Type != StringInputType.Directory)
                 continue;
 
-            var text = (string)field.GetValue(ArgumentHandler)!;
-            field.SetValue(ArgumentHandler, text.Replace("/", "\\").Replace("\"", string.Empty));
+            var text = (string?)field.GetValue(ArgumentHandler);
+            if (text is not null)
+                field.SetValue(ArgumentHandler, text.Replace("/", "\\").Replace("\"", string.Empty));
         }
         
         var newCommand = Command.Create(ExecutorName, ArgumentHandler, new List<CommandTrigger> { Trigger });

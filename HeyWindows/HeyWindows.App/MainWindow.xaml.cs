@@ -20,6 +20,11 @@ public partial class MainWindow : Window
     
     public static Commander Commander = new();
 
+    private void CommandCountCheck()
+    {
+        NoCommandsToShow.Visibility = CommandsPanel.Children.Count == 1 ? Visibility.Visible : Visibility.Collapsed;
+    }
+    
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
         ReloadConfig();
@@ -36,22 +41,26 @@ public partial class MainWindow : Window
         {
             CommandsPanel.Children.Add(new CommandControl(command, RemoveCommand));
         }
+
+        CommandCountCheck();
     }
 
     private void AddButton_OnClick(object sender, RoutedEventArgs e)
     {
-        CommandsPanel.Children.Insert(0, new CommandControl());
+        CommandsPanel.Children.Insert(0, new CommandControl(null, RemoveCommand));
+        CommandCountCheck();
     }
 
     public delegate void RemoveCallback(CommandControl command);
     
     public void RemoveCommand(CommandControl command)
     {
-        if (command.LoadedCommand is null)
-            return;
-        
-        ConfigData!.Commands.Remove(command.LoadedCommand);
+        if (command.LoadedCommand is not null)
+            ConfigData!.Commands.Remove(command.LoadedCommand);
+       
         CommandsPanel.Children.Remove(command);
+        
         SaveConfig();
+        CommandCountCheck();
     }
 }

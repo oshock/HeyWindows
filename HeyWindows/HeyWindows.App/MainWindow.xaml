@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HeyWindows.App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1000"
+        Title="MainWindow" Height="700" Width="600"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:userControls="clr-namespace:HeyWindows.App.UserControls"
         Background="#18191a"
@@ -16,20 +16,19 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
 
-        <Button Grid.Column="0"
+        <Button
                 Background="#256dd9" Margin="20" MinWidth="90"
                 Width="60" Height="40" 
                 x:Name="SaveButton"
                 Click="AddButton_OnClick">Add</Button>
         
-        <ScrollViewer Grid.Row="1" Grid.Column="0" Margin="10, -10">
+        <ScrollViewer Grid.Row="1" Margin="10, -10">
             <StackPanel x:Name="CommandsPanel">
+                <TextBlock Text="No commands to show" Foreground="#30ffffff" FontWeight="800" 
+                           Margin="50"
+                           FontSize="40"
+                           HorizontalAlignment="Center" x:Name="NoCommandsToShow"></TextBlock>
             </StackPanel>
         </ScrollViewer>
     </Grid>
