@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -121,7 +122,7 @@ public partial class CommandControl : UserControl
         }
     }
 
-    private void ActionType_OnSelectionChanged(object obj, SelectionChangedEventArgs e)
+    private void ActionType_OnSelectionChanged(object s, SelectionChangedEventArgs e)
     {
         IsUnsaved = true;
         Arguments.Children.Clear();
@@ -138,7 +139,29 @@ public partial class CommandControl : UserControl
 
         if (ArgumentHandler is null)
             throw new NullReferenceException("ArgumentHandler is null but Command is not.");
-        
+
+        void SetArgumentValue(Type type, string name, object? value)
+        {
+            var fields = ArgumentHandler.GetType().GetFields();
+            foreach (var f in fields)
+            {
+                var info = f.GetArgumentAttribute();
+                if (info.DisplayName.MakeFriendly() != name)
+                    continue;
+
+                if (f.FieldType != type)
+                    throw new InvalidDataException($"'{info.DisplayName}' is not a string. Unable to set.");
+
+                f.SetValue(ArgumentHandler, value);
+                return;
+            }
+        }
+
+        bool IsCommandValid()
+        {
+            return Command is not null && ArgumentHandler is not null;
+        }
+
         var fields = ArgumentHandler.GetType().GetFields();
         foreach (var field in fields)
         {
@@ -177,25 +200,12 @@ public partial class CommandControl : UserControl
                 {
                     IsUnsaved = true;
                     var sender = (TextBox)s;
-                    var handlerFields = ArgumentHandler.GetType().GetFields();
-
-                    foreach (var f in handlerFields)
-                    {
-                        var info = f.GetArgumentAttribute();
-                        if (info.DisplayName.MakeFriendly() != sender.Name)
-                            continue;
-
-                        if (f.FieldType != typeof(string))
-                            throw new InvalidDataException($"'{info.DisplayName}' is not a string. Unable to set.");
-                        
-                        f.SetValue(ArgumentHandler, sender.Text);
-                        return;
-                    }
+                    SetArgumentValue(typeof(string), sender.Name, sender.Text);
                 };
                 
                 textBox.Loaded += (_, _) =>
                 {
-                    if (Command is null || ArgumentHandler is null)
+                    if (!IsCommandValid())
                         return;
 
                     textBox.Text = (string)field.GetValue(ArgumentHandler)!;
@@ -245,7 +255,6 @@ public partial class CommandControl : UserControl
                             var name = sender.Name.Replace("_button", string.Empty);
                             var handlerFields = ArgumentHandler.GetType().GetFields();
                             
-                            
                             foreach (var f in handlerFields)
                             {
                                 var info = f.GetArgumentAttribute();
@@ -273,27 +282,14 @@ public partial class CommandControl : UserControl
                 {
                     IsUnsaved = true;
                     var sender = (CheckBox)checkBox;
-                    var handlerFields = ArgumentHandler!.GetType().GetFields();
-
-                    foreach (var f in handlerFields)
-                    {
-                        var info = f.GetArgumentAttribute();
-                        if (info.DisplayName.MakeFriendly() != sender.Name)
-                            continue;
-
-                        if (f.FieldType != typeof(bool))
-                            throw new InvalidDataException($"'{info.DisplayName}' is not a string. Unable to set.");
-                        
-                        f.SetValue(ArgumentHandler, sender.IsChecked ?? false);
-                        return;
-                    }
+                    SetArgumentValue(typeof(bool), sender.Name, sender.IsChecked ?? false);
                 }
                 
                 checkBox.Loaded += (_, _) =>
                 {
-                    if (Command is null || ArgumentHandler is null)
+                    if (!IsCommandValid())
                         return;
-
+                    
                     checkBox.IsChecked = (bool)field.GetValue(ArgumentHandler)!;
                     IsUnsaved = false;
                 };
@@ -375,7 +371,7 @@ public partial class CommandControl : UserControl
                 
                 textBox.Loaded += (_, _) =>
                 {
-                    if (Command is null || ArgumentHandler is null)
+                    if (!IsCommandValid())
                         return;
 
                     textBox.Text = Convert.ToString((int)field.GetValue(ArgumentHandler)!);
@@ -384,6 +380,10 @@ public partial class CommandControl : UserControl
                 
                 subPanel.Children.Add(textBox);
             }
+            else if (field.FieldType.IsEnum)
+            {
+                // TODO
+            } 
             
             Arguments.Children.Add(border);
         }
