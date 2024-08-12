@@ -43,7 +43,11 @@ public class ExecutableExecutor : ICommandExecutor
     public bool CanExecute(ICommandArgs args)
     {
         var exeArgs = args.Cast<ExecutableCommandArgs>()!;
-        return File.Exists(exeArgs.FilePath);
+        if (File.Exists(exeArgs.FilePath))
+            return true;
+        
+        LogError($"Unable to execute '{Name}'. '{exeArgs.FilePath}' does not exist.");
+        return false;
     }
     
     public void Execute(ICommandArgs args)

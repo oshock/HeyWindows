@@ -6,11 +6,15 @@ namespace HeyWindows.Core.Commands;
 
 public class Commander
 {
-    public static Dictionary<string, ICommandExecutor> ExecutorByName = new()
+    public static readonly Dictionary<string, ICommandExecutor> ExecutorByName = new()
     {
         {
             "Executable",
             new ExecutableExecutor()
+        },
+        {
+            "InternetRequest",
+            new InternetRequestExecutor()
         }
     };
     
