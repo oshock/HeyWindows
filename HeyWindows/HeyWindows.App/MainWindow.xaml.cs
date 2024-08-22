@@ -1,5 +1,6 @@
 ﻿global using static HeyWindows.App.Configs.ConfigSystem;
 global using static HeyWindows.Core.Logging.Logger;
+global using static HeyWindows.Core.Utils.BoolUtils;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
