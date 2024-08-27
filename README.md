@@ -13,4 +13,3 @@ You can add a command and type in the text which you want it to listen for. Then
 - Record your voice instead of text
 - Settings like Windows startup and is listening toggablity
 - Code cleanup
-- XAML bindings instead of events
