@@ -1,6 +1,6 @@
 # HeyWindows
  
-Basically a very rudimemtary Siri for Windows. 
+An interface for creating commands which are executed when the program hears keywords. 
 
 ## Features
 You can add a command and type in the text which you want it to listen for. Then you can add an action (currently only launching executables is implemented). Select a .exe file and arguments you wish to launch with.
@@ -13,3 +13,4 @@ You can add a command and type in the text which you want it to listen for. Then
 - Record your voice instead of text
 - Settings like Windows startup and is listening toggablity
 - Code cleanup
+- Input device configuration
