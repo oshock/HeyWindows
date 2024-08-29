@@ -9,8 +9,11 @@ using HeyWindows.App.Utils;
 using HeyWindows.Core.Commands;
 using HeyWindows.Core.Commands.Attributes;
 using HeyWindows.Core.Commands.Executors;
+using HeyWindows.Core.Listeners;
 using HeyWindows.Core.Utils;
 using Microsoft.Win32;
+using Wpf.Ui.Controls;
+using Button = System.Windows.Controls.Button;
 using TextBlock = Wpf.Ui.Controls.TextBlock;
 using TextBox = Wpf.Ui.Controls.TextBox;
 
@@ -429,5 +432,29 @@ public partial class CommandControl : UserControl
 
         var textBox = (TextBox)sender;
         Trigger.Trigger = textBox.Text;
+    }
+
+    private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (_isRecording)
+            return;
+        
+        _isRecording = true;
+        RecordIcon.Foreground = new SolidColorBrush(Colors.Red);
+        RecordIcon.Foreground = new SolidColorBrush(Colors.Red);
+        RecordIcon.Symbol = SymbolRegular.RecordStop20;
+
+        var listener = new Listener();
+        listener.Initialize();
+        listener.ListenSingleAsync((phrase, pronunciation) =>
+        {
+            Trigger = new CommandTrigger(null, pronunciation);
+            RecordResult.Text = phrase;
+        
+            _isRecording = false;
+            RecordIcon.Foreground = new SolidColorBrush(Colors.White);
+            RecordIcon.Foreground = new SolidColorBrush(Colors.White);
+            RecordIcon.Symbol = SymbolRegular.Record20;
+        });
     }
 }

@@ -47,11 +47,21 @@
                         <ColumnDefinition Width="75"/>
                     </Grid.ColumnDefinitions>
                     
-                    <Border Background="#0Affffff" CornerRadius="5" Margin="3"
+                    <Border Background="#0Affffff" CornerRadius="5" Margin="3" Grid.ColumnSpan="2"
                             MouseEnter="Border_OnMouseEnter"
                             MouseLeave="Border_OnMouseLeave">
-                        <ui:TextBox x:Name="RecordResult" PlaceholderText="Hey Windows Open Chrome..." Foreground="White" 
-                                FontSize="10" Margin="10" TextChanged="RecordResult_OnTextChanged"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <ui:TextBox x:Name="RecordResult" PlaceholderText="Hey Windows Open Chrome..." Foreground="White" 
+                                        FontSize="10" Margin="10" TextChanged="RecordResult_OnTextChanged"/>
+                            <Button Grid.Column="1" Click="ButtonBase_OnClick">
+                                <ui:SymbolIcon Symbol="Record24" x:Name="RecordIcon"/>
+                            </Button>
+                        </Grid>
                     </Border>
                 </Grid>
             </StackPanel> 
