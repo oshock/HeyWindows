@@ -8,7 +8,7 @@
         Title="MainWindow" Height="700" Width="600"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:userControls="clr-namespace:HeyWindows.App.UserControls"
-        Background="#18191a"
+        Background="#18191a" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
         Loaded="MainWindow_OnLoaded">
     <Grid>
         <Grid.RowDefinitions>
