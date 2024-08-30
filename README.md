@@ -12,7 +12,7 @@ You can add a command and type in the text which you want it to listen for. Then
 ## TODO
 - Add more action types
 - Collapsable command controls
-- Record your voice instead of text
+- ~~Record your voice instead of text~~ works fine, but inaccurate 
 - Settings like Windows startup and is listening toggablity
 - Code cleanup
 - Input device configuration
