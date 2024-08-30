@@ -430,8 +430,7 @@ public partial class CommandControl : UserControl
     {
         if (string.IsNullOrEmpty(RecordResult.Text))
         {
-            var text = "Please enter the keywords to listen for.";
-            RecordResult.Text = text;
+            RecordResult.Text = "Please enter the keywords to listen for.";
             RecordResult.Foreground = Brushes.Red;
 
             void gotFocus(object s, object e)
