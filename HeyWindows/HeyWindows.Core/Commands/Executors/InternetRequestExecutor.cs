@@ -17,11 +17,14 @@ public class InternetRequestCommandArgs : ICommandArgs
     [ArgumentField("Content Type", "The type of the body", "application/json...")]
     public string? ContentType;
     
-    [ArgumentField("Body", "Text to add to the body.", "{ \"CoolVariable\": 123 }")]
+    [ArgumentField("Body", "Text to add to the body (Leave empty if you would like to use a file instead).", "{ \"CoolVariable\": 123 }")]
     public string? Body;
     
     [ArgumentField("File", "A file to add to the body.", "C:\\File.json", StringInputType.File)]
     public string? File;
+    
+    [ArgumentField("Response Output", "The file where we'll write the response (Leave empty if not needed).", "C:\\Response.json", StringInputType.File)]
+    public string? Output;
     
     public InternetRequestCommandArgs() { }
     
@@ -49,9 +52,25 @@ public class InternetRequestExecutor : ICommandExecutor
             var apiArgs = (InternetRequestCommandArgs)args;
             var client = new RestClient();
             var request = new RestRequest(apiArgs.Url, apiArgs.Method);
-
-            request.AddBody(apiArgs.Body!, apiArgs.ContentType);
-            client.Execute(request);
+            LogInfo($"Initialized request: '{apiArgs.Method} :: {apiArgs.Url}'.");
+            
+            LogInfo("Adding body...");
+            if (string.IsNullOrEmpty(apiArgs.Body)) 
+                request.AddBody(apiArgs.Body!, apiArgs.ContentType);
+            else if (!string.IsNullOrEmpty(apiArgs.File))
+            {
+                var fileContent = File.ReadAllBytes(apiArgs.File);
+                request.AddBody(fileContent, apiArgs.ContentType);    
+            }
+            
+            var response = client.Execute(request);
+            LogInfo($"Executed request: '{response.Content}'.");
+            
+            if (string.IsNullOrEmpty(apiArgs.Output))
+                return;
+            
+            LogInfo($"Writing response to: '{apiArgs.Output}'.");
+            File.WriteAllText(apiArgs.Output!, response.Content);
         }
         catch (Exception ex)
         {
