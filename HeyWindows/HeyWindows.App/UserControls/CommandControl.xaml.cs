@@ -42,6 +42,7 @@ public partial class CommandControl : UserControl
         ActionType.SelectedItem = command.Executor switch
         {
             "Executable" => Executable,
+            "Internet" => Internet,
             _ => throw new KeyNotFoundException()
         };
 
@@ -136,6 +137,7 @@ public partial class CommandControl : UserControl
             ArgumentHandler = ExecutorName switch
             {
                 "Executable" => new ExecutableExecutor().ArgumentHandler,
+                "Internet" => new InternetRequestExecutor().ArgumentHandler,
                 _ => throw new KeyNotFoundException()
             };
         }
@@ -385,7 +387,27 @@ public partial class CommandControl : UserControl
             }
             else if (field.FieldType.IsEnum)
             {
-                // TODO
+                var comboBox = new ComboBox { Name = argumentInfo.DisplayName.MakeFriendly() };
+                var names = field.FieldType.GetEnumNames();
+
+                foreach (var item in names)
+                    comboBox.Items.Add(new ComboBoxItem { Name = item, Content = item });
+
+                comboBox.SelectionChanged += (s, _) =>
+                {
+                    IsUnsaved = true;
+                    var sender = (ComboBox)s;
+                    var value = Enum.ToObject(field.FieldType, sender.SelectedIndex);
+                    SetArgumentValue(field.FieldType, sender.Name, value);
+                };
+
+                comboBox.Loaded += (_, _) =>
+                {
+                    var value = (int)field.GetValue(ArgumentHandler)!;
+                    comboBox.SelectedIndex = value;
+                };
+                
+                subPanel.Children.Add(comboBox);
             } 
             
             Arguments.Children.Add(border);

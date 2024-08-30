@@ -13,7 +13,7 @@ public class Commander
             new ExecutableExecutor()
         },
         {
-            "InternetRequest",
+            "Internet",
             new InternetRequestExecutor()
         }
     };

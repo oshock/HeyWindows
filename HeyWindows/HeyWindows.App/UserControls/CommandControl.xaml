@@ -71,6 +71,7 @@
                 
                 <ComboBox x:Name="ActionType" SelectionChanged="ActionType_OnSelectionChanged">
                     <ComboBoxItem Name="Executable">Executable Launcher</ComboBoxItem>
+                    <ComboBoxItem Name="Internet">Internet Request Sender</ComboBoxItem>
                 </ComboBox>
                 
                 <StackPanel Margin="5" x:Name="Arguments"/>

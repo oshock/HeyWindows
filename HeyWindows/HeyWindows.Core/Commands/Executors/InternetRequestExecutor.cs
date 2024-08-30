@@ -14,8 +14,14 @@ public class InternetRequestCommandArgs : ICommandArgs
     [ArgumentField("Method", "The type of request to send.", "GET")]
     public Method Method;
     
+    [ArgumentField("Content Type", "The type of the body", "application/json...")]
+    public string? ContentType;
+    
+    [ArgumentField("Body", "Text to add to the body.", "{ \"CoolVariable\": 123 }")]
+    public string? Body;
+    
     [ArgumentField("File", "A file to add to the body.", "C:\\File.json", StringInputType.File)]
-    public string File;
+    public string? File;
     
     public InternetRequestCommandArgs() { }
     
@@ -40,7 +46,12 @@ public class InternetRequestExecutor : ICommandExecutor
     {
         try
         {
-            
+            var apiArgs = (InternetRequestCommandArgs)args;
+            var client = new RestClient();
+            var request = new RestRequest(apiArgs.Url, apiArgs.Method);
+
+            request.AddBody(apiArgs.Body!, apiArgs.ContentType);
+            client.Execute(request);
         }
         catch (Exception ex)
         {

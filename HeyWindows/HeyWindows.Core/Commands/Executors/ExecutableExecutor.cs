@@ -54,7 +54,7 @@ public class ExecutableExecutor : ICommandExecutor
     {
         try
         {
-            var exeArgs = args.Cast<ExecutableCommandArgs>()!;
+            var exeArgs = (ExecutableCommandArgs)args;
             var startInfo = new ProcessStartInfo
             {
                 FileName = exeArgs.FilePath,
