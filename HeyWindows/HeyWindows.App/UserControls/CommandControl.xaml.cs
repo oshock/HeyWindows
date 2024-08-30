@@ -428,6 +428,24 @@ public partial class CommandControl : UserControl
     
     private void SaveButton_OnClick(object sender, RoutedEventArgs e)
     {
+        if (string.IsNullOrEmpty(RecordResult.Text))
+        {
+            var text = "Please enter the keywords to listen for.";
+            RecordResult.Text = text;
+            RecordResult.Foreground = Brushes.Red;
+
+            void gotFocus(object s, object e)
+            {
+                RecordResult.Text = string.Empty;
+                RecordResult.Foreground = Brushes.White;
+                RecordResult.GotFocus -= gotFocus;
+            }
+            
+            RecordResult.GotFocus += gotFocus;
+            
+            return;
+        }
+        
         if (IsUnsaved)
             UploadCommand();
     }
