@@ -13,8 +13,8 @@ public class Commander
             new ExecutableExecutor()
         },
         {
-            "Internet",
-            new InternetRequestExecutor()
+            "Webhook",
+            new WebhookExecutor()
         }
     };
     

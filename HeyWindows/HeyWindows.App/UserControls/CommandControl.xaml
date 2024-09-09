@@ -71,7 +71,7 @@
                 
                 <ComboBox x:Name="ActionType" SelectionChanged="ActionType_OnSelectionChanged">
                     <ComboBoxItem Name="Executable">Executable Launcher</ComboBoxItem>
-                    <ComboBoxItem Name="Internet">Internet Request Sender</ComboBoxItem>
+                    <ComboBoxItem Name="Webhook">Webhook</ComboBoxItem>
                 </ComboBox>
                 
                 <StackPanel Margin="5" x:Name="Arguments"/>

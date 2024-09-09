@@ -42,7 +42,7 @@ public partial class CommandControl : UserControl
         ActionType.SelectedItem = command.Executor switch
         {
             "Executable" => Executable,
-            "Internet" => Internet,
+            "Webhook" => Webhook,
             _ => throw new KeyNotFoundException()
         };
 
@@ -137,7 +137,7 @@ public partial class CommandControl : UserControl
             ArgumentHandler = ExecutorName switch
             {
                 "Executable" => new ExecutableExecutor().ArgumentHandler,
-                "Internet" => new InternetRequestExecutor().ArgumentHandler,
+                "Webhook" => new WebhookExecutor().ArgumentHandler,
                 _ => throw new KeyNotFoundException()
             };
         }
