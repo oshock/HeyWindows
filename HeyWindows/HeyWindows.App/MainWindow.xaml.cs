@@ -18,7 +18,7 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        Logger.StartLogger(LOG_FILEPATH);
+        StartLogger(LOG_FILEPATH);
         InitializeComponent();
     }
     

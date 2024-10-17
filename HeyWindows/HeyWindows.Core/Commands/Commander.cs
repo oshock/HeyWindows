@@ -1,4 +1,5 @@
 ﻿using HeyWindows.Core.Commands.Executors;
+using HeyWindows.Core.Commands.Executors.Spotify;
 using HeyWindows.Core.Grammars;
 using HeyWindows.Core.Listeners;
 
@@ -15,6 +16,10 @@ public class Commander
         {
             "Webhook",
             new WebhookExecutor()
+        },
+        {
+            "Spotify",
+            new SpotifyExecutor()
         }
     };
     

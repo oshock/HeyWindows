@@ -4,27 +4,27 @@ using HeyWindows.Core.Utils;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace HeyWindows.Core.Commands.Executors;
-
-public class WebhookCommandArgs : ICommandArgs
+namespace HeyWindows.Core.Commands.Executors.Spotify;
+ 
+public class SpotifyCommandArgs : ICommandArgs
 {
     [ArgumentField("URL", "The webhook's url.", "https://example.com/resource")]
     public string Url;
     
-    public WebhookCommandArgs() { }
+    public SpotifyCommandArgs() { }
     
     [JsonConstructor]
-    public WebhookCommandArgs(string Url, Method Method, string File)
+    public SpotifyCommandArgs(string Url, Method Method, string File)
     {
         this.Url = Url;
     }
 }
 
-public class WebhookExecutor : ICommandExecutor
+public class SpotifyExecutor : ICommandExecutor
 {
-    public ICommandArgs ArgumentHandler { get; } = new WebhookCommandArgs();
+    public ICommandArgs ArgumentHandler { get; } = new SpotifyCommandArgs();
     
-    public string Name => "WebhookExecutor";
+    public string Name => "SpotifyExecutor";
 
     public bool CanExecute(ICommandArgs args) => true;
     
@@ -33,7 +33,7 @@ public class WebhookExecutor : ICommandExecutor
         try
         {
             var apiArgs = (WebhookCommandArgs)args;
-           // TODO
+           
         }
         catch (Exception ex)
         {
