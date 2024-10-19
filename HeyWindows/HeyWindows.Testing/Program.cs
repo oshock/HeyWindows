@@ -1,4 +1,5 @@
-﻿using HeyWindows.Core.Commands;
+﻿using System.Speech.Recognition;
+using HeyWindows.Core.Commands;
 using HeyWindows.Core.Commands.Executors.Spotify;
 using HeyWindows.Core.Listeners;
 using HeyWindows.Core.Logging;
@@ -16,13 +17,20 @@ while (!spotify.IsReady())
 
 var listener = new Listener();
 listener.Initialize();
-listener.ListenSingleAsync(e =>
-{
-    var devices = spotify.GetDevices();
-    spotify.SearchAndPlaySong(e.Result.Text, devices.First(x => x.IsActive).Id);
-});
+Listen();
 
 while (true)
 {
     Thread.Sleep(1000);
+}
+
+void Listen(SpeechRecognizedEventArgs? e = null)
+{
+    if (e != null)
+    {
+        var devices = spotify.GetDevices();
+        spotify.SearchAndPlaySong(e.Result.Text, devices.First(x => x.IsActive).Id);
+    }
+    
+    listener.ListenSingleAsync(Listen);
 }

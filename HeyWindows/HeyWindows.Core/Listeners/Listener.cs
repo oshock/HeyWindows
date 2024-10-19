@@ -73,13 +73,17 @@ public class Listener
     public async void ListenSingleAsync(Action<SpeechRecognizedEventArgs> callback)
     {
         LogInfo("Listening...\n");
-        Recognizer.SpeechRecognized += (_, e) =>
+
+        void handle(object? s, SpeechRecognizedEventArgs e)
         {
             callback(e);
             LogInfo("============================================");
             LogInfo(e.Result.Text);
             LogInfo("============================================");
-        };
+            Recognizer.SpeechRecognized -= handle;
+        }
+
+        Recognizer.SpeechRecognized += handle;
         
         Recognizer.SetInputToDefaultAudioDevice();
         Recognizer.RecognizeAsync();
