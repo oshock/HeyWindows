@@ -21,7 +21,8 @@ public class SpotifyTokenResponse
 
 public class SpotifyController
 {
-    private const string SPOTIFY_API_URL = "https://api.spotify.com/v1/me/player";
+    private const string SPOTIFY_API_URL = "https://api.spotify.com/v1";
+    private const string AUTH_SCOPE = "user-modify-playback-state user-read-playback-state";
     private string? _accessToken;
     private RestController controller;
     
@@ -135,7 +136,7 @@ public class SpotifyController
     {
         try
         {
-            var response = controller.SendRequest(Method.Put, "/pause",
+            var response = controller.SendRequest(Method.Put, "/me/player/pause",
                 ("Authorization", $"Bearer {_accessToken}")
                 );
 
@@ -145,7 +146,7 @@ public class SpotifyController
             }
             else
             {
-                LogError("Failed to pause music. \n" + response.ErrorMessage);
+                LogError("Failed to pause music. \n" + response.Content);
             }
         }
         catch (Exception ex)
@@ -158,7 +159,7 @@ public class SpotifyController
     {
         try
         {
-            var response = controller.SendRequest(Method.Put, "/play",
+            var response = controller.SendRequest(Method.Put, "/me/player/play",
                 ("Authorization", $"Bearer {_accessToken}")
             );
 
@@ -168,12 +169,108 @@ public class SpotifyController
             }
             else
             {
-                LogError("Failed to resume music. \n" + response.ErrorMessage);
+                LogError("Failed to resume music. \n" + response.Content);
             }
         }
         catch (Exception ex)
         {
             LogError(ex.ToString());
         }
+    }
+    
+    public void AddSongToQueue(string query, string deviceId)
+    {
+        try
+        {
+            var response = controller.SendRequest(Method.Get, $"/search?q={query}&type=track&limit=10",
+                ("Authorization", $"Bearer {_accessToken}")
+            );
+
+            if (response.IsSuccessful)
+            {
+                
+                var json = JsonConvert.DeserializeObject<SpotifySearchResponse>(response.Content);
+                if (json.Tracks.Items.Count == 0)
+                {
+                    LogInfo("No tracks found.");
+                    return;
+                }
+                
+                LogInfo("Found track(s).");
+
+                var track = json.Tracks.Items[0];
+                var playResponse = controller.SendRequest(Method.Post,
+                    $"/me/player/queue?uri={track.Uri}&device_id={deviceId}",
+                    ("Authorization", $"Bearer {_accessToken}"));
+
+                if (playResponse.IsSuccessStatusCode)
+                {
+                    LogInfo($"Added song '{track.Name}' to queue.");
+                }
+                else
+                {
+                    LogError("Failed to add song to queue. \n" + playResponse.Content);
+                }
+            }
+            else
+            {
+                LogError("Failed to find tracks. \n" + response.Content);
+            }
+        }
+        catch (Exception ex)
+        {
+            LogError(ex.ToString());
+        }
+    }
+    
+    public void SearchAndPlaySong(string query, string deviceId)
+    {
+        try
+        {
+            AddSongToQueue(query, deviceId);
+            
+            var response = controller.SendRequest(Method.Post, $"/me/player/next?device_id={deviceId}",
+                ("Authorization", $"Bearer {_accessToken}")
+            );
+
+            if (response.IsSuccessful)
+            {
+                LogInfo("Playing song.");
+            }
+            else
+            {
+                LogError("Failed to play song. \n" + response.Content);
+            }
+        }
+        catch (Exception ex)
+        {
+            LogError(ex.ToString());
+        }
+    }
+    
+    public List<SpotifyDevice>? GetDevices()
+    {
+        try
+        {
+            var response = controller.SendRequest(Method.Get, "/me/player/devices",
+                ("Authorization", $"Bearer {_accessToken}")
+            );
+
+            if (response.IsSuccessful)
+            {
+                LogInfo("Successfully retrieved device list.");
+                
+                var json = JsonConvert.DeserializeObject<SpotifyDevicesResponse>(response.Content);
+                return json.Devices;
+            }
+
+            LogError("Failed to find devices. \n" + response.Content);
+        }
+        catch (Exception ex)
+        {
+            LogError(ex.ToString());
+        }
+        
+        return null;
     }
 }

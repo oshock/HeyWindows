@@ -8,15 +8,15 @@ namespace HeyWindows.Core.Commands.Executors.Spotify;
  
 public class SpotifyCommandArgs : ICommandArgs
 {
-    [ArgumentField("URL", "The webhook's url.", "https://example.com/resource")]
-    public string Url;
+    [ArgumentField("Keyword", "", "https://example.com/resource")]
+    public string Keyword;
     
     public SpotifyCommandArgs() { }
     
     [JsonConstructor]
-    public SpotifyCommandArgs(string Url, Method Method, string File)
+    public SpotifyCommandArgs(string keyword)
     {
-        this.Url = Url;
+        Keyword = keyword;
     }
 }
 
