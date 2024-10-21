@@ -223,24 +223,35 @@ public class SpotifyController
         }
     }
     
-    public void SearchAndPlaySong(string query, string deviceId)
+    public void Skip(string deviceId)
     {
         try
         {
-            AddSongToQueue(query, deviceId);
-            
             var response = controller.SendRequest(Method.Post, $"/me/player/next?device_id={deviceId}",
                 ("Authorization", $"Bearer {_accessToken}")
             );
 
             if (response.IsSuccessful)
             {
-                LogInfo("Playing song.");
+                LogInfo("Skipped song.");
             }
             else
             {
-                LogError("Failed to play song. \n" + response.Content);
+                LogError("Failed to skip song. \n" + response.Content);
             }
+        }
+        catch (Exception ex)
+        {
+            LogError(ex.ToString());
+        }
+    }
+    
+    public void SearchAndPlaySong(string query, string deviceId)
+    {
+        try
+        {
+            AddSongToQueue(query, deviceId);
+            Skip(deviceId);
         }
         catch (Exception ex)
         {

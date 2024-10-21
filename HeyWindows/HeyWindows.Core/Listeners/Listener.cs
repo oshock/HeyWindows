@@ -17,7 +17,13 @@ public class Listener
         Recognizer = new SpeechRecognitionEngine(new CultureInfo(culture));
         Grammars = new List<GrammarBuilder>();
     }
-    
+
+    public void AddWord(string word)
+    {
+        var grammar = new GrammarBuilder(word);
+        Grammars.Add(grammar);
+    }
+
     public void Initialize()
     {
         Recognizer.UnloadAllGrammars();
@@ -70,23 +76,20 @@ public class Listener
         Recognizer.RecognizeAsync();
     }
     
-    public async void ListenSingleAsync(Action<SpeechRecognizedEventArgs> callback)
+    public async void ListenAsync(Action<SpeechRecognizedEventArgs> callback)
     {
         LogInfo("Listening...\n");
-
-        void handle(object? s, SpeechRecognizedEventArgs e)
+        Recognizer.SpeechRecognized += (_, e) =>
         {
-            callback(e);
-            LogInfo("============================================");
+            LogInfo("\n============================================");
             LogInfo(e.Result.Text);
-            LogInfo("============================================");
-            Recognizer.SpeechRecognized -= handle;
-        }
-
-        Recognizer.SpeechRecognized += handle;
+            LogInfo("============================================\n");
+            
+            callback(e);
+        };
         
         Recognizer.SetInputToDefaultAudioDevice();
-        Recognizer.RecognizeAsync();
+        Recognizer.RecognizeAsync(RecognizeMode.Multiple);
     }
 
     private void Recognizer_OnSpeechRecognized(object? sender, SpeechRecognizedEventArgs e)
